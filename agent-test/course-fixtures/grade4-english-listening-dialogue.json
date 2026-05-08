@@ -1,0 +1,59 @@
+{
+  "id": "grade4-english-listening-dialogue",
+  "title": "四年级英语单词听辨和句型对话",
+  "expectedArchetype": "course_ui",
+  "courseSpec": {
+    "subject": "英语",
+    "topic": "Food words and I would like",
+    "learningGoals": ["听辨常见食物单词", "使用 I would like 表达需求"],
+    "durationMinutes": 18,
+    "studentProfile": {
+      "grade": 4,
+      "age": 10,
+      "readingLevel": "medium",
+      "interests": ["餐厅角色扮演", "收集徽章"],
+      "weakPoints": ["听音和拼写对应慢"],
+      "preferredInteraction": ["对话", "配对"],
+      "guardianLimits": {
+        "maxSessionMinutes": 20,
+        "allowUploadedImages": false,
+        "allowGeneratedVideo": false,
+        "contentStrictness": "normal"
+      }
+    },
+    "styleSpec": {
+      "theme": "英语点餐小剧场",
+      "palette": ["#0EA5E9", "#FACC15", "#EF4444"],
+      "visualMood": "轻松清楚",
+      "characterStyle": "友善店员",
+      "uiDensity": "medium",
+      "forbidden": ["陌生人聊天", "充值"]
+    },
+    "explanationDepth": {
+      "depthLevel": "standard",
+      "priorKnowledgeCheck": true,
+      "conceptLayers": [
+        {
+          "concept": "食物单词的声音线索",
+          "whyItMatters": "听清开头音和重音能帮助匹配单词。",
+          "misconceptionToAddress": ["只看图片猜词而忽略发音"],
+          "representation": "dialogue"
+        },
+        {
+          "concept": "I would like 的礼貌表达",
+          "whyItMatters": "句型能在点餐和请求场景中迁移使用。",
+          "misconceptionToAddress": ["把 would like 和 like 的语境混用"],
+          "representation": "case"
+        }
+      ],
+      "examplePlan": {
+        "workedExamples": 2,
+        "guidedPractice": 2,
+        "independentChallenges": 2,
+        "transferTasks": 0
+      },
+      "feedbackDepth": "step_by_step",
+      "masteryEvidence": ["能听辨目标单词", "能完成句型对话"]
+    }
+  }
+}

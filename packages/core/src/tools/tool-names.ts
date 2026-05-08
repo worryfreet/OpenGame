@@ -29,6 +29,10 @@ export const ToolNames = {
   GENERATE_TILEMAP: 'generate_tilemap',
   GAME_TYPE_CLASSIFIER: 'classify_game_type',
   GENERATE_GDD: 'generate_gdd',
+  GENERATE_COURSE_PLAN: 'generate_course_plan',
+  GENERATE_COURSE_GDD: 'generate_course_gdd',
+  COURSE_TTS_MANIFEST: 'course_tts_manifest',
+  VALIDATE_COURSE_PACKAGE: 'validate_course_package',
   //COPY_TEMPLATE: 'copy_template',
 } as const;
 
@@ -57,6 +61,10 @@ export const ToolDisplayNames = {
   GENERATE_TILEMAP: 'GenerateTilemap',
   GAME_TYPE_CLASSIFIER: 'GameTypeClassifier',
   GENERATE_GDD: 'GenerateGDD',
+  GENERATE_COURSE_PLAN: 'GenerateCoursePlan',
+  GENERATE_COURSE_GDD: 'GenerateCourseGDD',
+  COURSE_TTS_MANIFEST: 'CourseTTSManifest',
+  VALIDATE_COURSE_PACKAGE: 'ValidateCoursePackage',
   //COPY_TEMPLATE: 'CopyTemplate',
 } as const;
 

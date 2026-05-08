@@ -1,0 +1,23 @@
+{
+  "id": "playlet-坐标定位",
+  "title": "坐标定位",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "坐标定位",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-坐标定位-background",
+      "type": "background",
+      "description": "坐标定位 抽象占位背景"
+    },
+    {
+      "key": "playlet-坐标定位-success",
+      "type": "sfx",
+      "description": "坐标定位 正确反馈占位音效"
+    }
+  ]
+}

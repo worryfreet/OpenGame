@@ -1,0 +1,23 @@
+{
+  "id": "playlet-卡片配对",
+  "title": "卡片配对",
+  "superclass": "information_organization",
+  "concreteGameplay": "卡片配对",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-卡片配对-background",
+      "type": "background",
+      "description": "卡片配对 抽象占位背景"
+    },
+    {
+      "key": "playlet-卡片配对-success",
+      "type": "sfx",
+      "description": "卡片配对 正确反馈占位音效"
+    }
+  ]
+}

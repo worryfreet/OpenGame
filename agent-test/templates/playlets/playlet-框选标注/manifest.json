@@ -1,0 +1,23 @@
+{
+  "id": "playlet-框选标注",
+  "title": "框选标注",
+  "superclass": "information_organization",
+  "concreteGameplay": "框选标注",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-框选标注-background",
+      "type": "background",
+      "description": "框选标注 抽象占位背景"
+    },
+    {
+      "key": "playlet-框选标注-success",
+      "type": "sfx",
+      "description": "框选标注 正确反馈占位音效"
+    }
+  ]
+}

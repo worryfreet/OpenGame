@@ -1,0 +1,23 @@
+{
+  "id": "playlet-论证表达",
+  "title": "论证表达",
+  "superclass": "language_communication",
+  "concreteGameplay": "论证表达",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-论证表达-background",
+      "type": "background",
+      "description": "论证表达 抽象占位背景"
+    },
+    {
+      "key": "playlet-论证表达-success",
+      "type": "sfx",
+      "description": "论证表达 正确反馈占位音效"
+    }
+  ]
+}

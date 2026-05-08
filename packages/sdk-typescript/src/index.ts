@@ -1,4 +1,10 @@
 export { query } from './query/createQuery.js';
+export {
+  buildCourseGamePrompt,
+  createCourseGame,
+  createCourseProgressTracker,
+  mergeCourseQueryOptions,
+} from './course/createCourseGame.js';
 export { AbortError, isAbortError } from './types/errors.js';
 export { Query } from './query/Query.js';
 export { SdkLogger } from './utils/logger.js';
@@ -15,6 +21,14 @@ export type {
 } from './mcp/createSdkMcpServer.js';
 
 export type { QueryOptions } from './query/createQuery.js';
+export type {
+  CourseGenerationStage,
+  CoursePlanOption,
+  CourseProgressEvent,
+  CourseSpec,
+  CreateCourseGameMode,
+  CreateCourseGameOptions,
+} from './course/createCourseGame.js';
 export type { LogLevel, LoggerConfig, ScopedLogger } from './utils/logger.js';
 
 export type {

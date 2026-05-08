@@ -1,0 +1,23 @@
+{
+  "id": "playlet-调参-plus-对比",
+  "title": "调参 + 对比",
+  "superclass": "composite_pattern",
+  "concreteGameplay": "调参 + 对比",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-调参-plus-对比-background",
+      "type": "background",
+      "description": "调参 + 对比 抽象占位背景"
+    },
+    {
+      "key": "playlet-调参-plus-对比-success",
+      "type": "sfx",
+      "description": "调参 + 对比 正确反馈占位音效"
+    }
+  ]
+}

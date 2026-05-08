@@ -1,0 +1,23 @@
+{
+  "id": "playlet-词块排序",
+  "title": "词块排序",
+  "superclass": "language_communication",
+  "concreteGameplay": "词块排序",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-词块排序-background",
+      "type": "background",
+      "description": "词块排序 抽象占位背景"
+    },
+    {
+      "key": "playlet-词块排序-success",
+      "type": "sfx",
+      "description": "词块排序 正确反馈占位音效"
+    }
+  ]
+}

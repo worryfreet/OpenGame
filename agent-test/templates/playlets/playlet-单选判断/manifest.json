@@ -1,0 +1,23 @@
+{
+  "id": "playlet-单选判断",
+  "title": "单选判断",
+  "superclass": "information_organization",
+  "concreteGameplay": "单选判断",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-单选判断-background",
+      "type": "background",
+      "description": "单选判断 抽象占位背景"
+    },
+    {
+      "key": "playlet-单选判断-success",
+      "type": "sfx",
+      "description": "单选判断 正确反馈占位音效"
+    }
+  ]
+}

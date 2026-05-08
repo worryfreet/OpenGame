@@ -1,0 +1,23 @@
+{
+  "id": "playlet-分镜板",
+  "title": "分镜板",
+  "superclass": "creation_project",
+  "concreteGameplay": "分镜板",
+  "engineFamily": "creation",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-分镜板-background",
+      "type": "background",
+      "description": "分镜板 抽象占位背景"
+    },
+    {
+      "key": "playlet-分镜板-success",
+      "type": "sfx",
+      "description": "分镜板 正确反馈占位音效"
+    }
+  ]
+}

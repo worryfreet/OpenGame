@@ -1,0 +1,62 @@
+{
+  "id": "grade6-math-ratio-fraction",
+  "title": "六年级数学比例和分数应用",
+  "expectedArchetype": "course_td",
+  "courseSpec": {
+    "subject": "数学",
+    "topic": "比例和分数应用",
+    "learningGoals": [
+      "用比例关系解释分数应用题",
+      "比较多路径解法并完成反思复盘"
+    ],
+    "durationMinutes": 30,
+    "studentProfile": {
+      "grade": 6,
+      "age": 12,
+      "readingLevel": "high",
+      "interests": ["策略挑战", "资源规划"],
+      "weakPoints": ["比例量和单位量混淆"],
+      "preferredInteraction": ["策略选择", "复习波次"],
+      "guardianLimits": {
+        "maxSessionMinutes": 35,
+        "allowUploadedImages": false,
+        "allowGeneratedVideo": false,
+        "contentStrictness": "normal"
+      }
+    },
+    "styleSpec": {
+      "theme": "比例策略训练场",
+      "palette": ["#1D4ED8", "#16A34A", "#F59E0B"],
+      "visualMood": "清晰有挑战",
+      "characterStyle": "策略教练",
+      "uiDensity": "high",
+      "forbidden": ["排行榜攀比", "抽卡"]
+    },
+    "explanationDepth": {
+      "depthLevel": "challenge",
+      "priorKnowledgeCheck": true,
+      "conceptLayers": [
+        {
+          "concept": "比例关系",
+          "whyItMatters": "比例可以把复杂数量关系转成可比较的倍数。",
+          "misconceptionToAddress": ["只看数字大小不看对应关系"],
+          "representation": "formula"
+        },
+        {
+          "concept": "单位量策略",
+          "whyItMatters": "先找单位量能解释分数应用题中的总量变化。",
+          "misconceptionToAddress": ["把部分量误当单位量"],
+          "representation": "case"
+        }
+      ],
+      "examplePlan": {
+        "workedExamples": 2,
+        "guidedPractice": 2,
+        "independentChallenges": 2,
+        "transferTasks": 2
+      },
+      "feedbackDepth": "socratic_hint",
+      "masteryEvidence": ["能列出比例关系", "能反思比较不同解法"]
+    }
+  }
+}

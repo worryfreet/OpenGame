@@ -1,0 +1,23 @@
+{
+  "id": "playlet-接落物",
+  "title": "接落物",
+  "superclass": "action_fluency",
+  "concreteGameplay": "接落物",
+  "engineFamily": "action",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-接落物-background",
+      "type": "background",
+      "description": "接落物 抽象占位背景"
+    },
+    {
+      "key": "playlet-接落物-success",
+      "type": "sfx",
+      "description": "接落物 正确反馈占位音效"
+    }
+  ]
+}

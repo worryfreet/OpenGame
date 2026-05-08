@@ -1,0 +1,23 @@
+{
+  "id": "playlet-拖拽分箱",
+  "title": "拖拽分箱",
+  "superclass": "information_organization",
+  "concreteGameplay": "拖拽分箱",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-拖拽分箱-background",
+      "type": "background",
+      "description": "拖拽分箱 抽象占位背景"
+    },
+    {
+      "key": "playlet-拖拽分箱-success",
+      "type": "sfx",
+      "description": "拖拽分箱 正确反馈占位音效"
+    }
+  ]
+}

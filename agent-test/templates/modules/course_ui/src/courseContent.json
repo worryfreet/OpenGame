@@ -1,0 +1,79 @@
+{
+  "course": {
+    "id": "sample-course-ui",
+    "title": "课程对话与练习示例",
+    "subject": "math",
+    "topic": "area and perimeter",
+    "grade": 3,
+    "archetype": "course_ui",
+    "depthLevel": "standard",
+    "durationMinutes": 15
+  },
+  "learningGoals": [
+    {
+      "id": "goal-area-perimeter",
+      "text": "区分面积和周长的含义",
+      "masteryEvidence": [
+        "能说出面积和周长的区别",
+        "能根据图形选择正确计算方法"
+      ]
+    }
+  ],
+  "lessonUnits": [
+    {
+      "id": "unit-area-perimeter",
+      "goalId": "goal-area-perimeter",
+      "sceneKey": "LessonScene",
+      "concept": "面积关注覆盖多少格，周长关注边界有多长",
+      "script": "先观察同一个长方形：铺满内部需要数面积，沿边走一圈需要数周长。",
+      "workedExample": "一个 3 x 4 的长方形面积是 12 个方格，周长是 14 条边。",
+      "misconceptions": ["把面积和周长都当成相乘", "只看图形大小不看要求"],
+      "interactionIds": ["interaction-sort-area-perimeter"],
+      "assessmentItemIds": ["assessment-area-perimeter"]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "interaction-sort-area-perimeter",
+      "goalId": "goal-area-perimeter",
+      "sceneKey": "PracticeScene",
+      "type": "choice",
+      "prompt": "看到“围一圈彩带”时，应该计算什么？",
+      "successFeedback": "正确，围一圈关注边界长度，所以是周长。",
+      "failureFeedback": "再想想彩带贴在哪里：它沿着边界走，不覆盖内部。"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "assessment-area-perimeter",
+      "goalId": "goal-area-perimeter",
+      "sceneKey": "BattleScene",
+      "question": "给长方形桌面贴一圈防撞条，需要计算什么？",
+      "options": ["面积", "周长", "重量", "高度"],
+      "correctIndex": 1,
+      "explanation": "防撞条沿桌面边缘贴一圈，所以要计算边界总长度，也就是周长。",
+      "misconceptionTag": "confuse_area_with_perimeter",
+      "hint": "想一想材料是在内部铺满，还是沿边界走一圈。"
+    }
+  ],
+  "narration": {
+    "segments": [
+      {
+        "id": "narration-intro",
+        "targetScene": "LessonScene",
+        "text": "今天我们用观察和选择来区分面积与周长。",
+        "fallbackSubtitle": "今天我们用观察和选择来区分面积与周长。"
+      }
+    ]
+  },
+  "videoTransitions": [],
+  "report": {
+    "masteryEvidence": ["完成讲解", "完成互动", "完成评价题"],
+    "metrics": ["accuracy", "hintUsage", "completedGoals"]
+  },
+  "templateRules": {
+    "allowedUse": "讲解、对话、选择题、卡牌问答和结算报告",
+    "requiresFeedback": true,
+    "reviewOnly": false
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "playlet-开关组合",
+  "title": "开关组合",
+  "superclass": "experiment_simulation",
+  "concreteGameplay": "开关组合",
+  "engineFamily": "simulation",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-开关组合-background",
+      "type": "background",
+      "description": "开关组合 抽象占位背景"
+    },
+    {
+      "key": "playlet-开关组合-success",
+      "type": "sfx",
+      "description": "开关组合 正确反馈占位音效"
+    }
+  ]
+}

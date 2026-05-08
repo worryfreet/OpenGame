@@ -1,0 +1,76 @@
+{
+  "course": {
+    "id": "sample-course-td",
+    "title": "课程复习塔防示例",
+    "subject": "math",
+    "topic": "fraction review",
+    "grade": 6,
+    "archetype": "course_td",
+    "depthLevel": "challenge",
+    "durationMinutes": 20
+  },
+  "learningGoals": [
+    {
+      "id": "goal-fraction-application",
+      "text": "在应用题中选择合适的分数运算策略",
+      "masteryEvidence": ["能识别单位量", "能解释为什么使用乘法或除法"]
+    }
+  ],
+  "lessonUnits": [
+    {
+      "id": "unit-fraction-review",
+      "goalId": "goal-fraction-application",
+      "sceneKey": "ReviewPrepScene",
+      "concept": "分数应用题先确定单位量，再选择运算关系",
+      "script": "塔防模板只用于复习巩固。进入波次前，先快速回顾单位量和数量关系。",
+      "workedExample": "已知一个数的 3/4 是 18，求这个数，要用 18 除以 3/4。",
+      "misconceptions": ["看到分数就直接相乘", "没有找单位量"],
+      "interactionIds": ["interaction-wave-review"],
+      "assessmentItemIds": ["assessment-fraction-strategy"]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "interaction-wave-review",
+      "goalId": "goal-fraction-application",
+      "sceneKey": "ReviewWaveScene",
+      "type": "review_wave",
+      "prompt": "每波敌人代表一种题型，答对策略题后获得建塔资源。",
+      "successFeedback": "策略判断正确，获得额外资源。",
+      "failureFeedback": "先找单位量，再判断是求部分量还是求整体。"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "assessment-fraction-strategy",
+      "goalId": "goal-fraction-application",
+      "sceneKey": "ReviewWaveScene",
+      "question": "一段路的 2/5 是 30 米，求全长应怎样列式？",
+      "options": ["30 x 2/5", "30 / 2/5", "30 + 2/5", "30 - 2/5"],
+      "correctIndex": 1,
+      "explanation": "30 米是全长的 2/5，求全长就是已知部分量求整体，用 30 除以 2/5。",
+      "misconceptionTag": "multiply_when_solving_whole",
+      "hint": "先判断 30 米是整体还是整体的一部分。"
+    }
+  ],
+  "narration": {
+    "segments": [
+      {
+        "id": "narration-td-intro",
+        "targetScene": "ReviewPrepScene",
+        "text": "这个塔防关卡用于复习分数应用题策略，不用于第一次讲新概念。",
+        "fallbackSubtitle": "这个塔防关卡用于复习分数应用题策略，不用于第一次讲新概念。"
+      }
+    ]
+  },
+  "videoTransitions": [],
+  "report": {
+    "masteryEvidence": ["完成复习波次", "完成策略判断", "解释错因"],
+    "metrics": ["accuracy", "waveClearRate", "completedGoals"]
+  },
+  "templateRules": {
+    "allowedUse": "复习、巩固、策略选择和波次反馈",
+    "requiresFeedback": true,
+    "reviewOnly": true
+  }
+}

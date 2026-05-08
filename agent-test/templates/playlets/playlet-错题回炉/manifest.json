@@ -1,0 +1,23 @@
+{
+  "id": "playlet-错题回炉",
+  "title": "错题回炉",
+  "superclass": "action_fluency",
+  "concreteGameplay": "错题回炉",
+  "engineFamily": "action",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-错题回炉-background",
+      "type": "background",
+      "description": "错题回炉 抽象占位背景"
+    },
+    {
+      "key": "playlet-错题回炉-success",
+      "type": "sfx",
+      "description": "错题回炉 正确反馈占位音效"
+    }
+  ]
+}

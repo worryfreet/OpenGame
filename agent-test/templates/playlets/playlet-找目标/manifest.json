@@ -1,0 +1,23 @@
+{
+  "id": "playlet-找目标",
+  "title": "找目标",
+  "superclass": "information_organization",
+  "concreteGameplay": "找目标",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-找目标-background",
+      "type": "background",
+      "description": "找目标 抽象占位背景"
+    },
+    {
+      "key": "playlet-找目标-success",
+      "type": "sfx",
+      "description": "找目标 正确反馈占位音效"
+    }
+  ]
+}

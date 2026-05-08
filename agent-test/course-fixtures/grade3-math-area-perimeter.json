@@ -1,0 +1,59 @@
+{
+  "id": "grade3-math-area-perimeter",
+  "title": "三年级数学面积周长",
+  "expectedArchetype": "course_grid",
+  "courseSpec": {
+    "subject": "数学",
+    "topic": "面积和周长",
+    "learningGoals": ["区分面积和周长的含义", "根据情境选择正确计算方法"],
+    "durationMinutes": 20,
+    "studentProfile": {
+      "grade": 3,
+      "age": 9,
+      "readingLevel": "medium",
+      "interests": ["搭建", "地图"],
+      "weakPoints": ["面积周长混淆"],
+      "preferredInteraction": ["网格", "选择"],
+      "guardianLimits": {
+        "maxSessionMinutes": 25,
+        "allowUploadedImages": false,
+        "allowGeneratedVideo": false,
+        "contentStrictness": "normal"
+      }
+    },
+    "styleSpec": {
+      "theme": "小小建筑师",
+      "palette": ["#2563EB", "#F97316", "#22C55E"],
+      "visualMood": "清晰活泼",
+      "characterStyle": "积木工程师",
+      "uiDensity": "medium",
+      "forbidden": ["抽卡", "充值"]
+    },
+    "explanationDepth": {
+      "depthLevel": "standard",
+      "priorKnowledgeCheck": true,
+      "conceptLayers": [
+        {
+          "concept": "面积表示覆盖多少格",
+          "whyItMatters": "帮助学生判断铺地砖、涂色等内部覆盖问题。",
+          "misconceptionToAddress": ["把内部格数和边界长度混为一谈"],
+          "representation": "visual_model"
+        },
+        {
+          "concept": "周长表示边界一圈长度",
+          "whyItMatters": "帮助学生判断围栏、防撞条等边界问题。",
+          "misconceptionToAddress": ["所有长方形问题都直接相乘"],
+          "representation": "formula"
+        }
+      ],
+      "examplePlan": {
+        "workedExamples": 2,
+        "guidedPractice": 2,
+        "independentChallenges": 2,
+        "transferTasks": 0
+      },
+      "feedbackDepth": "step_by_step",
+      "masteryEvidence": ["能解释面积与周长区别", "能按情境选择计算方法"]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "playlet-控制变量实验",
+  "title": "控制变量实验",
+  "superclass": "experiment_simulation",
+  "concreteGameplay": "控制变量实验",
+  "engineFamily": "simulation",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-控制变量实验-background",
+      "type": "background",
+      "description": "控制变量实验 抽象占位背景"
+    },
+    {
+      "key": "playlet-控制变量实验-success",
+      "type": "sfx",
+      "description": "控制变量实验 正确反馈占位音效"
+    }
+  ]
+}

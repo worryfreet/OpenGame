@@ -1,0 +1,23 @@
+{
+  "id": "playlet-条件组合推理",
+  "title": "条件组合推理",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "条件组合推理",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-条件组合推理-background",
+      "type": "background",
+      "description": "条件组合推理 抽象占位背景"
+    },
+    {
+      "key": "playlet-条件组合推理-success",
+      "type": "sfx",
+      "description": "条件组合推理 正确反馈占位音效"
+    }
+  ]
+}

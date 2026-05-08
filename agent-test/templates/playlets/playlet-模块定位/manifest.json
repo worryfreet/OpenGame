@@ -1,0 +1,23 @@
+{
+  "id": "playlet-模块定位",
+  "title": "模块定位",
+  "superclass": "diagnosis_verification",
+  "concreteGameplay": "模块定位",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-模块定位-background",
+      "type": "background",
+      "description": "模块定位 抽象占位背景"
+    },
+    {
+      "key": "playlet-模块定位-success",
+      "type": "sfx",
+      "description": "模块定位 正确反馈占位音效"
+    }
+  ]
+}

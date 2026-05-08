@@ -31,6 +31,8 @@
     "test:ci": "npm run test:ci --workspaces --if-present --parallel && npm run test:scripts",
     "test:scripts": "vitest run --config ./scripts/tests/vitest.config.ts",
     "test:e2e": "cross-env VERBOSE=true KEEP_OUTPUT=true npm run test:integration:sandbox:none",
+    "test:course": "cross-env GEMINI_SANDBOX=false vitest run --root ./integration-tests course-generation.test.ts --retry=0 --pool=threads --poolOptions.threads.singleThread=true",
+    "test:course:browser": "cross-env OPENGAME_REQUIRE_COURSE_BROWSER_SMOKE=true GEMINI_SANDBOX=false vitest run --root ./integration-tests course-generation.test.ts -t \"浏览器 smoke\" --retry=0 --pool=threads --poolOptions.threads.singleThread=true",
     "test:integration:all": "npm run test:integration:sandbox:none && npm run test:integration:sandbox:docker && npm run test:integration:sandbox:podman",
     "test:integration:sandbox:none": "cross-env GEMINI_SANDBOX=false vitest run --root ./integration-tests",
     "test:integration:sandbox:docker": "cross-env GEMINI_SANDBOX=docker npm run build:sandbox && GEMINI_SANDBOX=docker vitest run --root ./integration-tests",

@@ -1,0 +1,23 @@
+{
+  "id": "playlet-等式平衡",
+  "title": "等式平衡",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "等式平衡",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-等式平衡-background",
+      "type": "background",
+      "description": "等式平衡 抽象占位背景"
+    },
+    {
+      "key": "playlet-等式平衡-success",
+      "type": "sfx",
+      "description": "等式平衡 正确反馈占位音效"
+    }
+  ]
+}

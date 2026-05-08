@@ -1,0 +1,23 @@
+{
+  "id": "playlet-步骤排序",
+  "title": "步骤排序",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "步骤排序",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-步骤排序-background",
+      "type": "background",
+      "description": "步骤排序 抽象占位背景"
+    },
+    {
+      "key": "playlet-步骤排序-success",
+      "type": "sfx",
+      "description": "步骤排序 正确反馈占位音效"
+    }
+  ]
+}

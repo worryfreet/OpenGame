@@ -1,0 +1,23 @@
+{
+  "id": "playlet-证据链拼接",
+  "title": "证据链拼接",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "证据链拼接",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-证据链拼接-background",
+      "type": "background",
+      "description": "证据链拼接 抽象占位背景"
+    },
+    {
+      "key": "playlet-证据链拼接-success",
+      "type": "sfx",
+      "description": "证据链拼接 正确反馈占位音效"
+    }
+  ]
+}

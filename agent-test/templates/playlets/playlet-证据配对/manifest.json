@@ -1,0 +1,23 @@
+{
+  "id": "playlet-证据配对",
+  "title": "证据配对",
+  "superclass": "information_organization",
+  "concreteGameplay": "证据配对",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-证据配对-background",
+      "type": "background",
+      "description": "证据配对 抽象占位背景"
+    },
+    {
+      "key": "playlet-证据配对-success",
+      "type": "sfx",
+      "description": "证据配对 正确反馈占位音效"
+    }
+  ]
+}

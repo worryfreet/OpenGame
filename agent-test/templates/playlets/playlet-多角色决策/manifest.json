@@ -1,0 +1,23 @@
+{
+  "id": "playlet-多角色决策",
+  "title": "多角色决策",
+  "superclass": "strategy_roleplay",
+  "concreteGameplay": "多角色决策",
+  "engineFamily": "strategy",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-多角色决策-background",
+      "type": "background",
+      "description": "多角色决策 抽象占位背景"
+    },
+    {
+      "key": "playlet-多角色决策-success",
+      "type": "sfx",
+      "description": "多角色决策 正确反馈占位音效"
+    }
+  ]
+}

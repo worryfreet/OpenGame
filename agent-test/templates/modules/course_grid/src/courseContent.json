@@ -1,0 +1,79 @@
+{
+  "course": {
+    "id": "sample-course-grid",
+    "title": "课程网格任务示例",
+    "subject": "science",
+    "topic": "simple circuits",
+    "grade": 5,
+    "archetype": "course_grid",
+    "depthLevel": "deep",
+    "durationMinutes": 18
+  },
+  "learningGoals": [
+    {
+      "id": "goal-circuit-path",
+      "text": "判断电路是否形成闭合回路",
+      "masteryEvidence": ["能找出断开的连接点", "能解释灯泡亮或不亮的原因"]
+    }
+  ],
+  "lessonUnits": [
+    {
+      "id": "unit-circuit-path",
+      "goalId": "goal-circuit-path",
+      "sceneKey": "GridLessonScene",
+      "concept": "电流需要沿闭合路径流动，断点会让灯泡无法发亮",
+      "script": "把电池、导线和灯泡看成网格中的连接点，只有首尾连成一圈时才算闭合回路。",
+      "workedExample": "从电池正极出发，经过导线和灯泡，再回到负极，灯泡才会亮。",
+      "misconceptions": [
+        "只要材料齐全灯泡就会亮",
+        "导线碰到灯泡任意位置都算连接"
+      ],
+      "interactionIds": ["interaction-connect-circuit"],
+      "assessmentItemIds": ["assessment-circuit-path"]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "interaction-connect-circuit",
+      "goalId": "goal-circuit-path",
+      "sceneKey": "GridPracticeScene",
+      "type": "sequence",
+      "prompt": "按顺序连接电池、导线、灯泡和回路终点。",
+      "successFeedback": "闭合回路完成，电流可以完整流动。",
+      "failureFeedback": "当前路径还有断点，检查是否能回到电池另一端。"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "assessment-circuit-path",
+      "goalId": "goal-circuit-path",
+      "sceneKey": "GridPracticeScene",
+      "question": "灯泡不亮时，最应该先检查什么？",
+      "options": ["电路是否闭合", "灯泡颜色", "桌面大小", "导线颜色"],
+      "correctIndex": 0,
+      "explanation": "简单电路必须形成闭合回路，断点会让电流无法持续流动。",
+      "misconceptionTag": "materials_present_without_closed_path",
+      "hint": "沿着电流路径走一圈，看看能不能回到电池另一端。"
+    }
+  ],
+  "narration": {
+    "segments": [
+      {
+        "id": "narration-grid-intro",
+        "targetScene": "GridLessonScene",
+        "text": "在网格里追踪电流路径，找出闭合回路。",
+        "fallbackSubtitle": "在网格里追踪电流路径，找出闭合回路。"
+      }
+    ]
+  },
+  "videoTransitions": [],
+  "report": {
+    "masteryEvidence": ["完成路径连接", "解释断点原因", "完成评价题"],
+    "metrics": ["accuracy", "stepErrors", "completedGoals"]
+  },
+  "templateRules": {
+    "allowedUse": "分类、排序、路径、步骤推理和即时反馈",
+    "requiresFeedback": true,
+    "reviewOnly": false
+  }
+}

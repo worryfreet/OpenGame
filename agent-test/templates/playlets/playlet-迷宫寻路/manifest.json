@@ -1,0 +1,23 @@
+{
+  "id": "playlet-迷宫寻路",
+  "title": "迷宫寻路",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "迷宫寻路",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-迷宫寻路-background",
+      "type": "background",
+      "description": "迷宫寻路 抽象占位背景"
+    },
+    {
+      "key": "playlet-迷宫寻路-success",
+      "type": "sfx",
+      "description": "迷宫寻路 正确反馈占位音效"
+    }
+  ]
+}

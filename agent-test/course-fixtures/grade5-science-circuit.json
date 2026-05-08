@@ -1,0 +1,59 @@
+{
+  "id": "grade5-science-circuit",
+  "title": "五年级科学简单电路",
+  "expectedArchetype": "course_grid",
+  "courseSpec": {
+    "subject": "科学",
+    "topic": "简单电路",
+    "learningGoals": ["解释闭合电路能让灯泡发光", "判断常见电路故障原因"],
+    "durationMinutes": 28,
+    "studentProfile": {
+      "grade": 5,
+      "age": 11,
+      "readingLevel": "medium",
+      "interests": ["实验", "解谜"],
+      "weakPoints": ["只记结论不看连接路径"],
+      "preferredInteraction": ["实验模拟", "步骤推理"],
+      "guardianLimits": {
+        "maxSessionMinutes": 30,
+        "allowUploadedImages": true,
+        "allowGeneratedVideo": false,
+        "contentStrictness": "strict"
+      }
+    },
+    "styleSpec": {
+      "theme": "电路实验室",
+      "palette": ["#334155", "#FBBF24", "#38BDF8"],
+      "visualMood": "实验感但不压暗",
+      "characterStyle": "实验助手",
+      "uiDensity": "medium",
+      "forbidden": ["危险操作", "真实品牌 IP"]
+    },
+    "explanationDepth": {
+      "depthLevel": "deep",
+      "priorKnowledgeCheck": true,
+      "conceptLayers": [
+        {
+          "concept": "闭合回路",
+          "whyItMatters": "只有形成完整路径，电流才能持续通过灯泡。",
+          "misconceptionToAddress": ["电池碰到灯泡就一定发光"],
+          "representation": "experiment"
+        },
+        {
+          "concept": "元件连接顺序",
+          "whyItMatters": "理解连接路径有助于排查断路和短路。",
+          "misconceptionToAddress": ["只看元件数量不看连接方式"],
+          "representation": "visual_model"
+        }
+      ],
+      "examplePlan": {
+        "workedExamples": 2,
+        "guidedPractice": 2,
+        "independentChallenges": 2,
+        "transferTasks": 1
+      },
+      "feedbackDepth": "step_by_step",
+      "masteryEvidence": ["能画出闭合电路路径", "能迁移排查新电路故障"]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "playlet-流程接线",
+  "title": "流程接线",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "流程接线",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-流程接线-background",
+      "type": "background",
+      "description": "流程接线 抽象占位背景"
+    },
+    {
+      "key": "playlet-流程接线-success",
+      "type": "sfx",
+      "description": "流程接线 正确反馈占位音效"
+    }
+  ]
+}

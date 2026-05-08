@@ -1,0 +1,23 @@
+{
+  "id": "playlet-关键词提取",
+  "title": "关键词提取",
+  "superclass": "language_communication",
+  "concreteGameplay": "关键词提取",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-关键词提取-background",
+      "type": "background",
+      "description": "关键词提取 抽象占位背景"
+    },
+    {
+      "key": "playlet-关键词提取-success",
+      "type": "sfx",
+      "description": "关键词提取 正确反馈占位音效"
+    }
+  ]
+}

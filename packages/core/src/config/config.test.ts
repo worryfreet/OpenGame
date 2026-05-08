@@ -25,6 +25,10 @@ import { GitService } from '../services/gitService.js';
 import { ShellTool } from '../tools/shell.js';
 import { ReadFileTool } from '../tools/read-file.js';
 import { GrepTool } from '../tools/grep.js';
+import { GenerateCoursePlanTool } from '../tools/generate-course-plan.js';
+import { GenerateCourseGDDTool } from '../tools/generate-course-gdd.js';
+import { CourseTtsManifestTool } from '../tools/course-tts-manifest.js';
+import { ValidateCoursePackageTool } from '../tools/validate-course-package.js';
 import { canUseRipgrep } from '../utils/ripgrepUtils.js';
 import { RipGrepTool } from '../tools/ripGrep.js';
 import { logRipgrepFallback } from '../telemetry/loggers.js';
@@ -102,6 +106,18 @@ vi.mock('../tools/write-file', () => ({
 }));
 vi.mock('../tools/web-fetch', () => ({
   WebFetchTool: createToolMock('web_fetch'),
+}));
+vi.mock('../tools/generate-course-plan.js', () => ({
+  GenerateCoursePlanTool: createToolMock('generate_course_plan'),
+}));
+vi.mock('../tools/generate-course-gdd.js', () => ({
+  GenerateCourseGDDTool: createToolMock('generate_course_gdd'),
+}));
+vi.mock('../tools/course-tts-manifest.js', () => ({
+  CourseTtsManifestTool: createToolMock('course_tts_manifest'),
+}));
+vi.mock('../tools/validate-course-package.js', () => ({
+  ValidateCoursePackageTool: createToolMock('validate_course_package'),
 }));
 vi.mock('../tools/read-many-files', () => ({
   ReadManyFilesTool: createToolMock('read_many_files'),
@@ -663,6 +679,94 @@ describe('Server Config (config.ts)', () => {
         (call) => call[0] instanceof vi.mocked(ShellTool),
       );
       expect(wasShellToolRegistered).toBe(true);
+    });
+
+    it('should register the course plan tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['GenerateCoursePlan'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasCoursePlanToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(GenerateCoursePlanTool),
+      );
+      expect(wasCoursePlanToolRegistered).toBe(true);
+    });
+
+    it('should register the course GDD tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['GenerateCourseGDD'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasCourseGDDToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(GenerateCourseGDDTool),
+      );
+      expect(wasCourseGDDToolRegistered).toBe(true);
+    });
+
+    it('should register the course package validation tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['ValidateCoursePackage'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasCourseValidationToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(ValidateCoursePackageTool),
+      );
+      expect(wasCourseValidationToolRegistered).toBe(true);
+    });
+
+    it('should register the course TTS manifest tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['CourseTTSManifest'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasCourseTtsManifestToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(CourseTtsManifestTool),
+      );
+      expect(wasCourseTtsManifestToolRegistered).toBe(true);
     });
 
     it('should register a tool if coreTools contains the displayName with argument-specific pattern', async () => {

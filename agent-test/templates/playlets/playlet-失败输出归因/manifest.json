@@ -1,0 +1,23 @@
+{
+  "id": "playlet-失败输出归因",
+  "title": "失败输出归因",
+  "superclass": "diagnosis_verification",
+  "concreteGameplay": "失败输出归因",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-失败输出归因-background",
+      "type": "background",
+      "description": "失败输出归因 抽象占位背景"
+    },
+    {
+      "key": "playlet-失败输出归因-success",
+      "type": "sfx",
+      "description": "失败输出归因 正确反馈占位音效"
+    }
+  ]
+}

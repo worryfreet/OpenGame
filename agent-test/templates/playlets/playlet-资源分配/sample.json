@@ -1,0 +1,20 @@
+{
+  "prompt": "完成「资源分配」玩法任务，并说明关键理由。",
+  "items": [
+    {
+      "id": "item_1",
+      "label": "示例项目 A",
+      "answer": true
+    },
+    {
+      "id": "item_2",
+      "label": "示例项目 B",
+      "answer": false
+    }
+  ],
+  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "feedback": {
+    "success": "操作正确，继续进入下一段玩法。",
+    "partial": "已经接近目标，先查看提示再试一次。"
+  }
+}

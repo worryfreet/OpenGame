@@ -1,0 +1,23 @@
+{
+  "id": "playlet-点击射击",
+  "title": "点击射击",
+  "superclass": "action_fluency",
+  "concreteGameplay": "点击射击",
+  "engineFamily": "action",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-点击射击-background",
+      "type": "background",
+      "description": "点击射击 抽象占位背景"
+    },
+    {
+      "key": "playlet-点击射击-success",
+      "type": "sfx",
+      "description": "点击射击 正确反馈占位音效"
+    }
+  ]
+}

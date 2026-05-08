@@ -1,0 +1,23 @@
+{
+  "id": "playlet-图形拼装",
+  "title": "图形拼装",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "图形拼装",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-图形拼装-background",
+      "type": "background",
+      "description": "图形拼装 抽象占位背景"
+    },
+    {
+      "key": "playlet-图形拼装-success",
+      "type": "sfx",
+      "description": "图形拼装 正确反馈占位音效"
+    }
+  ]
+}

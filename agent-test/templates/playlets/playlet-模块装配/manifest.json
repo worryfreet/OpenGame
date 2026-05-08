@@ -1,0 +1,23 @@
+{
+  "id": "playlet-模块装配",
+  "title": "模块装配",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "模块装配",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-模块装配-background",
+      "type": "background",
+      "description": "模块装配 抽象占位背景"
+    },
+    {
+      "key": "playlet-模块装配-success",
+      "type": "sfx",
+      "description": "模块装配 正确反馈占位音效"
+    }
+  ]
+}

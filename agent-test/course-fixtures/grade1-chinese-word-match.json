@@ -1,0 +1,59 @@
+{
+  "id": "grade1-chinese-word-match",
+  "title": "一年级语文识字词语匹配",
+  "expectedArchetype": "course_ui",
+  "courseSpec": {
+    "subject": "语文",
+    "topic": "识字与词语匹配",
+    "learningGoals": ["认识 3 个常见汉字", "把汉字和生活词语正确匹配"],
+    "durationMinutes": 12,
+    "studentProfile": {
+      "grade": 1,
+      "age": 7,
+      "readingLevel": "low",
+      "interests": ["校园", "贴纸收集"],
+      "weakPoints": ["形近字混淆"],
+      "preferredInteraction": ["选择", "配对"],
+      "guardianLimits": {
+        "maxSessionMinutes": 15,
+        "allowUploadedImages": false,
+        "allowGeneratedVideo": false,
+        "contentStrictness": "strict"
+      }
+    },
+    "styleSpec": {
+      "theme": "校园识字小站",
+      "palette": ["#2F80ED", "#F2C94C", "#27AE60"],
+      "visualMood": "明亮亲切",
+      "characterStyle": "同伴小老师",
+      "uiDensity": "low",
+      "forbidden": ["恐怖惊吓", "抽卡"]
+    },
+    "explanationDepth": {
+      "depthLevel": "intro",
+      "priorKnowledgeCheck": false,
+      "conceptLayers": [
+        {
+          "concept": "字形观察",
+          "whyItMatters": "先看清字形能减少形近字混淆。",
+          "misconceptionToAddress": ["只看读音不看字形"],
+          "representation": "visual_model"
+        },
+        {
+          "concept": "词语语境",
+          "whyItMatters": "把字放进生活词语里更容易理解。",
+          "misconceptionToAddress": ["看到熟悉部件就随意猜词"],
+          "representation": "story"
+        }
+      ],
+      "examplePlan": {
+        "workedExamples": 1,
+        "guidedPractice": 2,
+        "independentChallenges": 1,
+        "transferTasks": 0
+      },
+      "feedbackDepth": "short_reason",
+      "masteryEvidence": ["能指出汉字关键部件", "能完成字词配对"]
+    }
+  }
+}

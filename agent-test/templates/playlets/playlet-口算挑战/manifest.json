@@ -1,0 +1,23 @@
+{
+  "id": "playlet-口算挑战",
+  "title": "口算挑战",
+  "superclass": "quantity_space_system",
+  "concreteGameplay": "口算挑战",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-口算挑战-background",
+      "type": "background",
+      "description": "口算挑战 抽象占位背景"
+    },
+    {
+      "key": "playlet-口算挑战-success",
+      "type": "sfx",
+      "description": "口算挑战 正确反馈占位音效"
+    }
+  ]
+}

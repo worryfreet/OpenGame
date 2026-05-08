@@ -1,0 +1,23 @@
+{
+  "id": "playlet-证明步骤补全",
+  "title": "证明步骤补全",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "证明步骤补全",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-证明步骤补全-background",
+      "type": "background",
+      "description": "证明步骤补全 抽象占位背景"
+    },
+    {
+      "key": "playlet-证明步骤补全-success",
+      "type": "sfx",
+      "description": "证明步骤补全 正确反馈占位音效"
+    }
+  ]
+}

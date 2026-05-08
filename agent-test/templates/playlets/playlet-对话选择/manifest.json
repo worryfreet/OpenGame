@@ -1,0 +1,23 @@
+{
+  "id": "playlet-对话选择",
+  "title": "对话选择",
+  "superclass": "language_communication",
+  "concreteGameplay": "对话选择",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-对话选择-background",
+      "type": "background",
+      "description": "对话选择 抽象占位背景"
+    },
+    {
+      "key": "playlet-对话选择-success",
+      "type": "sfx",
+      "description": "对话选择 正确反馈占位音效"
+    }
+  ]
+}

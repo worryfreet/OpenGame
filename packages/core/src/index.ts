@@ -25,6 +25,18 @@ export * from './fallback/types.js';
 
 export * from './qwen/qwenOAuth2.js';
 
+// Export course generation primitives
+export * from './course/schemas.js';
+export * from './course/subjectTaxonomy.js';
+export * from './course/gameplayMapping.js';
+export * from './course/playletCatalog.js';
+export * from './course/courseWorkflow.js';
+export * from './course/planScoring.js';
+export * from './course/validation.js';
+export * from './course/courseGddMapper.js';
+export * from './course/tts/lessoninTtsService.js';
+export * from './course/tts/narrationManifest.js';
+
 // Export utilities
 export * from './utils/paths.js';
 export * from './utils/schemaValidator.js';
@@ -122,6 +134,10 @@ export * from './tools/task.js';
 export * from './tools/skill.js';
 export * from './tools/todoWrite.js';
 export * from './tools/exitPlanMode.js';
+export * from './tools/generate-course-plan.js';
+export * from './tools/generate-course-gdd.js';
+export * from './tools/course-tts-manifest.js';
+export * from './tools/validate-course-package.js';
 
 // MCP OAuth
 export { MCPOAuthProvider } from './mcp/oauth-provider.js';

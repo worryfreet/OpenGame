@@ -1,0 +1,23 @@
+{
+  "id": "playlet-时间线排序",
+  "title": "时间线排序",
+  "superclass": "sequence_reasoning",
+  "concreteGameplay": "时间线排序",
+  "engineFamily": "grid",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-时间线排序-background",
+      "type": "background",
+      "description": "时间线排序 抽象占位背景"
+    },
+    {
+      "key": "playlet-时间线排序-success",
+      "type": "sfx",
+      "description": "时间线排序 正确反馈占位音效"
+    }
+  ]
+}

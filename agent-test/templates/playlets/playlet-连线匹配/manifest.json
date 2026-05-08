@@ -1,0 +1,23 @@
+{
+  "id": "playlet-连线匹配",
+  "title": "连线匹配",
+  "superclass": "information_organization",
+  "concreteGameplay": "连线匹配",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-连线匹配-background",
+      "type": "background",
+      "description": "连线匹配 抽象占位背景"
+    },
+    {
+      "key": "playlet-连线匹配-success",
+      "type": "sfx",
+      "description": "连线匹配 正确反馈占位音效"
+    }
+  ]
+}

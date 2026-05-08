@@ -1,0 +1,23 @@
+{
+  "id": "playlet-找异常",
+  "title": "找异常",
+  "superclass": "information_organization",
+  "concreteGameplay": "找异常",
+  "engineFamily": "ui",
+  "status": "ready",
+  "renderer": "GenericPlayletScene",
+  "configSchema": "./schema.json",
+  "sampleConfig": "./sample.json",
+  "defaultAssets": [
+    {
+      "key": "playlet-找异常-background",
+      "type": "background",
+      "description": "找异常 抽象占位背景"
+    },
+    {
+      "key": "playlet-找异常-success",
+      "type": "sfx",
+      "description": "找异常 正确反馈占位音效"
+    }
+  ]
+}
