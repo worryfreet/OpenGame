@@ -1,20 +1,37 @@
 {
-  "prompt": "完成「失败输出归因」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "观察答题系统的失败输出，选出真正导致错误的原因。",
+  "outputTitle": "面积单位诊断",
+  "output": "学生把“4 平方米”解释成“一条 4 米长的边”。",
+  "expectedBehavior": "应先判断这是面积单位，再说明它描述区域大小。",
+  "causes": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "unit_type_confusion",
+      "label": "没有区分面积单位和长度单位",
+      "correct": true,
+      "hint": "看单位里是否有“平方”。",
+      "explanation": "平方单位描述面积，不能当作长度。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "number_misread",
+      "label": "把数字 4 看成了 5",
+      "correct": false,
+      "explanation": "失败输出里的数字没有读错，错误来自单位含义。"
+    },
+    {
+      "id": "missing_quantity_check",
+      "label": "没有先判断量表示什么",
+      "correct": true,
+      "hint": "先问它表示长度、面积还是质量。"
+    },
+    {
+      "id": "theme_distraction",
+      "label": "题目主题不够有趣",
+      "correct": false
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "选出所有导致失败的根因，避开无关表面现象。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "归因正确，下一步可以进入修复练习。",
+    "partial": "先区分根因和表面现象，再提交。"
   }
 }

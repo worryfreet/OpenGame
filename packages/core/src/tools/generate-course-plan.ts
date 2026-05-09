@@ -20,6 +20,7 @@ import type {
   ExplanationDepthLevel,
 } from '../course/schemas.js';
 import { courseSpecSchema } from '../course/schemas.js';
+import { buildCoursePlanConfirmationSummary } from '../course/product/stylePreview.js';
 import {
   mapSubjectToGameplayCandidates,
   type GameplayCandidate,
@@ -105,7 +106,15 @@ class GenerateCoursePlanInvocation extends BaseToolInvocation<
         signal,
       );
       const options = this.parseAndValidateOptions(result, specValidation.data);
-      const responseJson = JSON.stringify({ options }, null, 2);
+      const confirmationSummary = buildCoursePlanConfirmationSummary(
+        specValidation.data,
+        options,
+      );
+      const responseJson = JSON.stringify(
+        { options, confirmationSummary },
+        null,
+        2,
+      );
 
       return {
         llmContent: `<course-plan-options>
@@ -305,18 +314,26 @@ ${JSON.stringify(candidatePlans, null, 2)}
   }
 
   private formatDisplayOutput(options: CoursePlanOption[]): string {
+    const confirmationSummary = buildCoursePlanConfirmationSummary(
+      this.params.courseSpec,
+      options,
+    );
     const rows = options
-      .map(
-        (option) =>
-          `| ${option.id} | ${option.title} | ${option.courseArchetype} | ${option.score.learningFit} | ${option.score.explanationDepthFit} | ${option.score.implementationStability} | ${option.score.cost} |`,
-      )
+      .map((option) => {
+        const confirmation = confirmationSummary.options.find(
+          (item) => item.id === option.id,
+        );
+        return `| ${option.id} | ${option.title} | ${option.courseArchetype} | ${option.score.learningFit} | ${option.score.explanationDepthFit} | ${option.score.implementationStability} | ${confirmation?.estimatedCostCents ?? '-'} | ${confirmation?.estimatedDurationMinutes ?? '-'} |`;
+      })
       .join('\n');
 
     return `**课程游戏方案已生成**
 
-| ID | 标题 | 模板 | 学习匹配 | 深度匹配 | 稳定性 | 成本 |
-| --- | --- | --- | ---: | ---: | ---: | ---: |
+| ID | 标题 | 模板 | 学习匹配 | 深度匹配 | 稳定性 | 预计成本 | 预计时长 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
 ${rows}
+
+推荐优先确认：${confirmationSummary.recommendedOptionId}
 
 请先让用户确认 selectedPlanId，再调用 \`generate_course_gdd\`。`;
   }

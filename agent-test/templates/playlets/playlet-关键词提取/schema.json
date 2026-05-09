@@ -3,7 +3,8 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "sourceText",
+    "keywords",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +12,40 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "sourceText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "keywords": {
       "type": "array",
-      "minItems": 1
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "answer"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answer": {
+            "type": "boolean"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

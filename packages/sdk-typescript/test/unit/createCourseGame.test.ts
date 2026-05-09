@@ -79,6 +79,7 @@ describe('createCourseGame', () => {
         cwd: '/tmp/opengame-course',
         includePartialMessages: true,
         coreTools: expect.arrayContaining([
+          'GenerateNextCourseSpec',
           'GenerateCoursePlan',
           'GenerateCourseGDD',
           'GenerateAssets',
@@ -127,6 +128,98 @@ describe('createCourseGame', () => {
         stage: 'course_plan_options',
         status: 'completed',
         toolName: 'generate_course_plan',
+      }),
+    ]);
+  });
+
+  it('构造课程续作 prompt，先生成下一课 CourseSpec 再进入方案生成', async () => {
+    const { buildNextCourseGamePrompt } =
+      await import('../../src/course/createCourseGame.js');
+
+    const prompt = buildNextCourseGamePrompt({
+      profileId: 'profile_1',
+      previousCourseSpec: buildCourseSpec(),
+      previousGameplayType: '网格建造',
+      learningReport: {
+        profileId: 'profile_1',
+        subject: '数学',
+        weakPoints: ['单位混淆'],
+        masteredGoals: ['理解面积含义'],
+        misconceptionTags: ['area_unit_confusion'],
+      },
+    });
+
+    expect(prompt).toContain('先调用 `generate_next_course_spec`');
+    expect(prompt).toContain('只调用 `generate_course_plan`');
+    expect(prompt).toContain('不能盲目重复相同玩法');
+    expect(prompt).toContain('"previousGameplayType": "网格建造"');
+    expect(prompt).toContain('"weakPoints": [');
+  });
+
+  it('创建课程续作 SDK 查询时默认启用下一课工具', async () => {
+    const { createNextCourseGame } =
+      await import('../../src/course/createCourseGame.js');
+
+    const result = createNextCourseGame({
+      profileId: 'profile_1',
+      previousCourseSpec: buildCourseSpec(),
+      learningReport: {
+        profileId: 'profile_1',
+        subject: '数学',
+        weakPoints: ['单位混淆'],
+      },
+      options: {
+        cwd: '/tmp/opengame-course',
+      },
+    });
+
+    expect(result).toEqual({ mocked: true });
+    expect(queryMock).toHaveBeenCalledWith({
+      prompt: expect.stringContaining('generate_next_course_spec'),
+      options: expect.objectContaining({
+        cwd: '/tmp/opengame-course',
+        includePartialMessages: true,
+        coreTools: expect.arrayContaining([
+          'GenerateNextCourseSpec',
+          'GenerateCoursePlan',
+        ]),
+      }),
+    });
+  });
+
+  it('拒绝缺少学习报告和学习状态的课程续作请求', async () => {
+    const { buildNextCourseGamePrompt } =
+      await import('../../src/course/createCourseGame.js');
+
+    expect(() =>
+      buildNextCourseGamePrompt({
+        profileId: 'profile_1',
+        previousCourseSpec: buildCourseSpec(),
+      }),
+    ).toThrow('learningReport 或 learningState');
+  });
+
+  it('跟踪下一课 CourseSpec 生成进度事件', async () => {
+    const { createCourseProgressTracker } =
+      await import('../../src/course/createCourseGame.js');
+    const track = createCourseProgressTracker();
+
+    expect(
+      track(
+        buildAssistantMessage([
+          {
+            type: 'tool_use',
+            id: 'tool-next',
+            name: 'generate_next_course_spec',
+            input: { profileId: 'profile_1' },
+          },
+        ]),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        stage: 'next_course_spec',
+        status: 'running',
+        toolName: 'generate_next_course_spec',
       }),
     ]);
   });

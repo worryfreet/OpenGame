@@ -1,10 +1,16 @@
 export { query } from './query/createQuery.js';
 export {
   buildCourseGamePrompt,
+  buildNextCourseGamePrompt,
   createCourseGame,
+  createNextCourseGame,
   createCourseProgressTracker,
   mergeCourseQueryOptions,
 } from './course/createCourseGame.js';
+export {
+  buildReviseCoursePlanPrompt,
+  reviseCoursePlan,
+} from './course/reviseCoursePlan.js';
 export { AbortError, isAbortError } from './types/errors.js';
 export { Query } from './query/Query.js';
 export { SdkLogger } from './utils/logger.js';
@@ -23,12 +29,23 @@ export type {
 export type { QueryOptions } from './query/createQuery.js';
 export type {
   CourseGenerationStage,
+  CreateNextCourseGameOptions,
   CoursePlanOption,
   CourseProgressEvent,
   CourseSpec,
   CreateCourseGameMode,
   CreateCourseGameOptions,
+  LearningReportSummary,
+  LearningState,
+  NextCourseMode,
+  StudentPreferenceProfile,
 } from './course/createCourseGame.js';
+export type {
+  CourseGDD,
+  CourseRevisionChange,
+  CourseRevisionRequest,
+  ReviseCoursePlanOptions,
+} from './course/reviseCoursePlan.js';
 export type { LogLevel, LoggerConfig, ScopedLogger } from './utils/logger.js';
 
 export type {

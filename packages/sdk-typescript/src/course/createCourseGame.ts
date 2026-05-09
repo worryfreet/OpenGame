@@ -9,6 +9,10 @@ import type {
 
 export type StudentGrade = 1 | 2 | 3 | 4 | 5 | 6;
 export type ExplanationDepthLevel = 'intro' | 'standard' | 'deep' | 'challenge';
+export type NextCourseMode =
+  | 'next_lesson'
+  | 'reinforcement'
+  | 'same_topic_new_gameplay';
 
 export interface CourseSpec {
   subject: string;
@@ -22,6 +26,11 @@ export interface CourseSpec {
     interests: string[];
     weakPoints?: string[];
     preferredInteraction?: string[];
+    ttsPreference?: {
+      voice?: string;
+      speed?: number;
+      emotion?: string;
+    };
     guardianLimits?: {
       maxSessionMinutes: number;
       allowUploadedImages: boolean;
@@ -92,6 +101,45 @@ export interface CoursePlanOption {
 
 export type CreateCourseGameMode = 'plan_only' | 'confirmed_generation';
 
+export interface StudentPreferenceProfile {
+  profileId: string;
+  grade: StudentGrade;
+  interests: string[];
+  preferredThemes: string[];
+  preferredPalette?: string[];
+  preferredGameplayTypes: string[];
+  readingLevel: 'low' | 'medium' | 'high';
+  ttsPreference?: {
+    voice?: string;
+    speed?: number;
+    emotion?: string;
+  };
+}
+
+export interface LearningReportSummary {
+  profileId?: string;
+  subject: string;
+  weakPoints?: string[];
+  masteredGoals?: string[];
+  misconceptionTags?: string[];
+  hintUsageCount?: number;
+  completionRate?: number;
+  coursePackageId?: string;
+}
+
+export interface LearningState {
+  profileId: string;
+  subjectStates: Array<{
+    subject: string;
+    weakPoints: string[];
+    masteredGoals: string[];
+    misconceptionTags: string[];
+    hintUsageCount?: number;
+    completionRate?: number;
+    lastCoursePackageId?: string;
+  }>;
+}
+
 export interface CreateCourseGameOptions {
   courseSpec: CourseSpec;
   mode?: CreateCourseGameMode;
@@ -101,7 +149,24 @@ export interface CreateCourseGameOptions {
   options?: QueryOptions;
 }
 
+export interface CreateNextCourseGameOptions {
+  profileId: string;
+  subject?: string;
+  previousCourseSpec?: CourseSpec;
+  learningState?: LearningState;
+  learningReport?: LearningReportSummary;
+  preferenceProfile?: StudentPreferenceProfile;
+  previousGameplayType?: string;
+  requestedMode?: NextCourseMode;
+  mode?: CreateCourseGameMode;
+  selectedPlan?: CoursePlanOption;
+  selectedPlanId?: string;
+  outputDir?: string;
+  options?: QueryOptions;
+}
+
 export type CourseGenerationStage =
+  | 'next_course_spec'
   | 'course_plan_options'
   | 'course_gdd'
   | 'course_scaffold'
@@ -119,6 +184,7 @@ export interface CourseProgressEvent {
 }
 
 const COURSE_CORE_TOOLS = [
+  'GenerateNextCourseSpec',
   'GenerateCoursePlan',
   'GenerateCourseGDD',
   'GenerateAssets',
@@ -132,6 +198,7 @@ const COURSE_CORE_TOOLS = [
 ] as const;
 
 const TOOL_STAGE_MAP: Record<string, CourseGenerationStage> = {
+  generate_next_course_spec: 'next_course_spec',
   generate_course_plan: 'course_plan_options',
   generate_course_gdd: 'course_gdd',
   generate_game_assets: 'game_assets',
@@ -143,6 +210,17 @@ export function createCourseGame(params: CreateCourseGameOptions): Query {
   validateCreateCourseGameOptions(params);
 
   const prompt = buildCourseGamePrompt(params);
+  const options = mergeCourseQueryOptions(params.options);
+
+  return query({ prompt, options });
+}
+
+export function createNextCourseGame(
+  params: CreateNextCourseGameOptions,
+): Query {
+  validateCreateNextCourseGameOptions(params);
+
+  const prompt = buildNextCourseGamePrompt(params);
   const options = mergeCourseQueryOptions(params.options);
 
   return query({ prompt, options });
@@ -200,6 +278,68 @@ export function buildCourseGamePrompt(params: CreateCourseGameOptions): string {
     selectedPlanJson ?? '{}',
     '```',
   ].join('\n');
+}
+
+export function buildNextCourseGamePrompt(
+  params: CreateNextCourseGameOptions,
+): string {
+  validateCreateNextCourseGameOptions(params);
+
+  const mode = params.mode ?? 'plan_only';
+  const outputDir = params.outputDir ?? 'agent-test/games/generated-course';
+  const nextCourseInput = {
+    profileId: params.profileId,
+    subject: params.subject,
+    previousCourseSpec: params.previousCourseSpec,
+    learningState: params.learningState,
+    learningReport: params.learningReport,
+    preferenceProfile: params.preferenceProfile,
+    previousGameplayType: params.previousGameplayType,
+    requestedMode: params.requestedMode,
+  };
+
+  const lines = [
+    '你正在通过 OpenGame SDK 运行课程续作生成。',
+    '',
+    '第一目标：先调用 `generate_next_course_spec`，基于学习报告、学习状态、上一课和偏好生成下一课 CourseSpec。',
+    '硬性约束：',
+    '- 如果 `generate_next_course_spec` 返回 needs_intake 或工具错误，停止并把追问返回给外部 ToC 服务。',
+    '- 拿到下一课 CourseSpec 后，才能进入既有课程方案生成流程。',
+    '- 下一课必须继承必要偏好，但不能盲目重复相同玩法。',
+    '',
+    'generate_next_course_spec 参数 JSON：',
+    '```json',
+    stableJson(nextCourseInput),
+    '```',
+  ];
+
+  if (mode === 'plan_only') {
+    lines.push(
+      '',
+      '第二目标：只调用 `generate_course_plan`，基于下一课 CourseSpec 生成 3 个受控课程游戏方案。',
+      '生成方案后必须停下，等待外部服务确认 `selectedPlanId`；不要调用 `generate_course_gdd`。',
+    );
+    return lines.join('\n');
+  }
+
+  lines.push(
+    '',
+    '第二目标：基于下一课 CourseSpec 和已确认方案完成课程生成链路。',
+    '硬性约束：',
+    '- 调用 `generate_course_gdd` 时必须包含 `userConfirmed: true`、`selectedPlanId` 和下方 `selectedPlan`。',
+    '- 必须继续调用课程模板 scaffold、普通素材、`course_tts_manifest` 和 `validate_course_package`。',
+    '- 如果课程包验证存在 error，停止并报告阻断项。',
+    '',
+    `输出目录：${outputDir}`,
+    '',
+    `selectedPlanId：${params.selectedPlanId}`,
+    '',
+    'selectedPlan JSON：',
+    '```json',
+    stableJson(params.selectedPlan ?? {}),
+    '```',
+  );
+  return lines.join('\n');
 }
 
 export function createCourseProgressTracker(): (
@@ -287,6 +427,33 @@ function validateCreateCourseGameOptions(
   }
 }
 
+function validateCreateNextCourseGameOptions(
+  params: CreateNextCourseGameOptions,
+): void {
+  if (!params.profileId?.trim()) {
+    throw new Error('profileId 不能为空。');
+  }
+  if (!params.learningReport && !params.learningState) {
+    throw new Error('课程续作必须提供 learningReport 或 learningState。');
+  }
+  if (params.previousCourseSpec) {
+    validateCourseSpecShape(params.previousCourseSpec);
+  }
+
+  const mode = params.mode ?? 'plan_only';
+  if (mode === 'confirmed_generation') {
+    if (!params.selectedPlan) {
+      throw new Error('confirmed_generation 模式必须提供 selectedPlan。');
+    }
+    if (!params.selectedPlanId) {
+      throw new Error('confirmed_generation 模式必须提供 selectedPlanId。');
+    }
+    if (params.selectedPlan.id !== params.selectedPlanId) {
+      throw new Error('selectedPlan.id 必须与 selectedPlanId 一致。');
+    }
+  }
+}
+
 function validateCourseSpecShape(spec: CourseSpec): void {
   if (!spec || typeof spec !== 'object') {
     throw new Error('courseSpec 必须是结构化对象。');
@@ -331,6 +498,7 @@ function buildProgressMessage(
   status: CourseProgressEvent['status'],
 ): string {
   const label = {
+    next_course_spec: '下一课 CourseSpec 生成',
     course_plan_options: '课程方案生成',
     course_gdd: 'Course GDD 生成',
     course_scaffold: '课程模板 scaffold',

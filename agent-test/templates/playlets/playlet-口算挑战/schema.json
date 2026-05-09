@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "problems",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +11,43 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "problems": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "prompt",
+          "answer"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answer": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "choices": {
+            "type": "array"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

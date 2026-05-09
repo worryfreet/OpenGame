@@ -9,6 +9,20 @@
 
 `workflow/done/260508-create-diff-pet.md` - 创建名为 Diff 的 Codex 自定义宠物，记录生成、姿态、验证和打包结果。
 `workflow/done/260508-ai-literacy-lesson1-sample.md` - 基于课程总剧情大纲 Lesson 1 生成 AI 素养游戏化课程样例。
+`workflow/done/260508-mvp2-product-boundary.md` - MVP 2.0 产品输入、偏好记忆、学习状态和家长策略边界的阶段 0 实施记录。
+`workflow/done/260508-mvp2-intake-session.md` - MVP 2.0 智能输入向导的自然语言补全、追问和工具入口实施记录。
+`workflow/done/260508-mvp2-style-preview.md` - MVP 2.0 风格板预览、方案确认增强和讲解深度调节阶段 2 实施记录。
+`workflow/done/260508-mvp2-learning-memory.md` - MVP 2.0 偏好记忆与学习状态记忆阶段 3 实施记录。
+`workflow/done/260508-mvp2-course-revision.md` - MVP 2.0 轻量编辑器与课程修订阶段 4 实施记录。
+`workflow/done/260509-mvp2-next-course.md` - MVP 2.0 学习报告深化与课程续作阶段 5 实施记录。
+`workflow/done/260509-mvp2-guardian-recovery.md` - MVP 2.0 家长控制与失败恢复阶段 6 实施记录。
+`workflow/done/260509-playlet-realization-round3.md` - 第三轮真实 playlet 实现任务，覆盖找目标、找异常和连线匹配。
+`workflow/done/260509-playlet-realization-round4.md` - 第四轮真实 playlet 实现任务，覆盖关键词提取、需求清单验收和框选标注。
+`workflow/done/260509-playlet-realization-round5.md` - 第五轮真实 playlet 实现任务，覆盖时间线排序、流程接线和条件组合推理。
+`workflow/done/260509-playlet-realization-round6.md` - 第六轮真实 playlet 实现任务，覆盖证据链拼接、证明步骤补全和口算挑战。
+`workflow/done/260509-playlet-realization-round7.md` - 第七轮真实 playlet 实现任务，覆盖失败输出归因、模块定位和坐标定位。
+`workflow/done/260509-playlet-realization-round8.md` - 第八轮真实 playlet 实现任务，覆盖迷宫寻路、模块装配和滑杆调参。
+`workflow/done/260509-playlet-realization-round9.md` - 第九轮真实 playlet 实现任务，覆盖等式平衡、图形拼装和开关组合。
 
 ## 产品文档
 
@@ -29,6 +43,13 @@
 `../agent-test/docs/modules/course_grid/template_api.md` - 课程网格模板 API，开发分类、排序、路径和步骤反馈模板时必读。
 `../agent-test/docs/modules/course_td/template_api.md` - 课程塔防模板 API，开发复习波次和策略巩固模板时必读。
 
+## 产品化体验文档
+
+`../agent-test/docs/product/mvp2-intake-flow.md` - MVP 2.0 输入向导、状态边界、隐私最小化和进入 CourseSpec 的规则，开发产品化输入或记忆功能时必读。
+`../agent-test/docs/product/mvp2-style-preview.md` - MVP 2.0 风格板预览、方案确认摘要、讲解深度调节和风格安全规则，开发生成前确认体验时必读。
+`../agent-test/docs/product/mvp2-learning-memory.md` - MVP 2.0 偏好记忆、学习状态、隐私清洗和数据删除规则，开发持续使用、学习报告或续作功能时必读。
+`../agent-test/docs/product/mvp2-guardian-policy.md` - MVP 2.0 家长控制、生成失败恢复、重试预算和发布前策略校验规则，开发素材生成、TTS、验证或恢复功能时必读。
+
 ## 全局重要记忆
 
 - 与用户沟通、代理文档和代码注释统一使用中文；必要英文术语首次出现时补充中文说明。
@@ -48,3 +69,13 @@
 - 玩法之间统一通过 `WorkflowRunner`、`CourseStateStore` 和 `TransitionManager` 过渡，playlet 只输出 `PlayletResult`，学习报告从统一状态读取证据。
 - 课程 SDK/headless 入口统一走 `packages/sdk-typescript/src/course/createCourseGame.ts`；默认 `plan_only` 只生成方案并等待 `selectedPlanId` 确认，确认后才进入 Course GDD、scaffold、素材、TTS 和课程包验证。
 - 课程模板生产 build 使用 `agent-test/templates/core/tsconfig.json`，必须排除 `src/test` 且不依赖 Vitest 类型；三类 `course_*` 模板的 `gameConfig.json` 必须保留 core `main.ts` 依赖的 `screenSize`、`debugConfig.debug`、`renderConfig.pixelArt`。
+- MVP 2.0 产品层不改 MVP 1.0 的受控生成核心；自然语言输入、偏好记忆、学习状态和家长策略统一进入 `packages/core/src/course/product/`，再转换为受控 `CourseSpec`。
+- 产品层持久化只允许保存 `profileId` 关联的结构化偏好和学习摘要，不保存学生真实姓名、头像、语音样本、完整对话或精确画像。
+- `complete_course_intake` 是 MVP 2.0 产品输入入口：低影响字段可默认补齐并写入 `assumptions`，高影响字段缺失必须追问；`ready_for_plan` 后才能把 `CourseSpec` 交给 `generate_course_plan`。
+- `generate_style_preview` 是 MVP 2.0 生成前风格板入口，只输出 `StylePreview`，不触发素材生成；知名 IP 风格不得直接进入 `previewPrompt`。
+- 方案确认摘要统一由 `packages/core/src/course/product/stylePreview.ts` 的 `buildCoursePlanConfirmationSummary()` 生成；讲解深度切换用 `adjustCoursePlanDepth()` 重评方案，不能绕过 `selectedPlanId` 确认。
+- 偏好记忆和学习状态记忆必须分离：`StudentPreferenceProfile` 只保存兴趣、主题、配色、玩法、阅读水平和 TTS 偏好；`LearningState` 只保存薄弱点、掌握目标、错因、提示次数、完成率和上次课程包。
+- 任何 profile 数据删除都必须同时清除偏好档案和学习状态；持久化前必须清洗学生真实姓名、头像、语音样本、完整对话、原始学生输入和精确画像。
+- 课程轻量修订统一走 `packages/core/src/course/product/courseRevision.ts` 和 `revise_course_plan`，只修改结构化 `CourseSpec`、`CoursePlanOption` 或 `CourseGDD`；不允许直接修改生成后的课程源码。
+- 课程续作统一走 `packages/core/src/course/product/nextCoursePlanner.ts` 和 `generate_next_course_spec`；学习报告/学习状态不足时返回追问，状态充分时生成下一课 `CourseSpec` 后再进入 `generate_course_plan`。
+- 家长控制必须贯穿输入、Course GDD、资产生成和发布校验：禁用视频时跳过视频生成并清空 `assetPlan.video`；失败恢复统一走 `packages/core/src/course/product/generationRecovery.ts`，受 `maxRetryCount` 和 `maxEstimatedCostCents` 双上限约束。

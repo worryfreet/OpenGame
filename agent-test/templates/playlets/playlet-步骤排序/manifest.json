@@ -5,7 +5,7 @@
   "concreteGameplay": "步骤排序",
   "engineFamily": "grid",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "步骤排序PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

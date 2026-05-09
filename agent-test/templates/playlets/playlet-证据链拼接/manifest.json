@@ -5,7 +5,7 @@
   "concreteGameplay": "证据链拼接",
   "engineFamily": "grid",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "证据链拼接PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

@@ -1,20 +1,46 @@
 {
-  "prompt": "完成「模块定位」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "定位能帮助修复面积单位错误的系统模块。",
+  "systemTitle": "面积学习诊断流程",
+  "modules": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "unit_checker",
+      "label": "单位判断",
+      "description": "识别平方单位",
+      "target": true,
+      "x": 0.24,
+      "y": 0.34,
+      "hint": "先找负责单位含义的模块。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "formula_engine",
+      "label": "公式应用",
+      "description": "长 x 宽",
+      "target": true,
+      "x": 0.52,
+      "y": 0.58,
+      "explanation": "面积题通常还需要公式模块参与。"
+    },
+    {
+      "id": "avatar_skin",
+      "label": "角色装扮",
+      "description": "更换外观",
+      "target": false,
+      "x": 0.78,
+      "y": 0.34,
+      "explanation": "角色装扮不影响单位判断。"
+    },
+    {
+      "id": "sound_effect",
+      "label": "音效反馈",
+      "description": "播放提示音",
+      "target": false,
+      "x": 0.36,
+      "y": 0.78
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "选中所有负责本次修复的模块，避开无关模块。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "模块定位正确，可以继续分析修复路径。",
+    "partial": "先根据模块职责判断它是否影响当前错误。"
   }
 }

@@ -1,18 +1,32 @@
 {
-  "prompt": "完成「滑杆调参」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "调节讲解参数，让课程既清楚又不过度提示。",
+  "params": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "pace",
+      "label": "讲解速度",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "value": 2,
+      "targetMin": 5,
+      "targetMax": 7,
+      "unit": "档",
+      "hint": "速度太慢，试着调到 5 到 7 档。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "hint_strength",
+      "label": "提示强度",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "value": 8,
+      "targetMin": 3,
+      "targetMax": 5,
+      "unit": "档",
+      "hint": "提示过强会暴露答案，调低到中间区间。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "所有滑杆都需要进入绿色目标区间。",
   "feedback": {
     "success": "操作正确，继续进入下一段玩法。",
     "partial": "已经接近目标，先查看提示再试一次。"

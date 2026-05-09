@@ -1,19 +1,36 @@
 {
   "type": "object",
   "additionalProperties": true,
-  "required": [
-    "prompt",
-    "items",
-    "successCriteria"
-  ],
+  "required": ["prompt", "steps", "successCriteria"],
   "properties": {
     "prompt": {
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "steps": {
       "type": "array",
-      "minItems": 1
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "order"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "type": "number",
+            "minimum": 1
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

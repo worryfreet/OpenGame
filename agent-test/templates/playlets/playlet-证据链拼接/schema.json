@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "chain",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +11,39 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "claim": {
+      "type": "string"
+    },
+    "chain": {
       "type": "array",
-      "minItems": 1
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "order"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "type": "number"
+          },
+          "role": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

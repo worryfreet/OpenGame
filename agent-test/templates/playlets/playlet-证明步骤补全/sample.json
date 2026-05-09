@@ -1,20 +1,35 @@
 {
-  "prompt": "完成「证明步骤补全」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "补全证明中的两个空位。",
+  "goal": "证明：长方形长 6、宽 4 时，面积为 24 平方厘米。",
+  "steps": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "given",
+      "label": "已知长方形长 6 厘米、宽 4 厘米",
+      "order": 1,
+      "locked": true
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "formula",
+      "label": "长方形面积 = 长 x 宽",
+      "order": 2,
+      "locked": false
+    },
+    {
+      "id": "substitute",
+      "label": "代入得到 6 x 4 = 24",
+      "order": 3,
+      "locked": false
+    },
+    {
+      "id": "conclude",
+      "label": "所以面积为 24 平方厘米",
+      "order": 4,
+      "locked": true
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "把候选步骤放入正确空位，使证明顺序完整。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "证明步骤完整成立。",
+    "partial": "检查前一步是否已经提供了当前步骤所需的依据。"
   }
 }

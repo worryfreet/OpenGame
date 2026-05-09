@@ -5,7 +5,7 @@
   "concreteGameplay": "连线匹配",
   "engineFamily": "ui",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "连线匹配PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

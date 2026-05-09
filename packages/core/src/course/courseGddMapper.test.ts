@@ -5,13 +5,9 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import type {
-  CourseArchetype,
-  CourseGDD,
-  CoursePlanOption,
-  CourseSpec,
-} from './schemas.js';
+import type { CourseArchetype } from './schemas.js';
 import { mapCourseGddToOpenGameScaffold } from './courseGddMapper.js';
+import { buildCourseGdd } from './courseGddMapper.fixtures.js';
 
 describe('mapCourseGddToOpenGameScaffold', () => {
   it.each<CourseArchetype>(['course_ui', 'course_grid', 'course_td'])(
@@ -61,6 +57,12 @@ describe('mapCourseGddToOpenGameScaffold', () => {
       );
       expect(getGeneratedText(result, 'src/main.ts')).toContain(
         'WorkflowEntryScene',
+      );
+      expect(getGeneratedText(result, 'src/main.ts')).toContain(
+        "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-步骤排序';",
+      );
+      expect(getGeneratedText(result, 'src/main.ts')).toContain(
+        "game.scene.add('步骤排序PlayletScene', WorkflowPlayletScene1);",
       );
       expect(getGeneratedText(result, 'src/main.ts')).toContain(
         `game.scene.add('${firstSceneFor(archetype)}'`,
@@ -122,6 +124,653 @@ describe('mapCourseGddToOpenGameScaffold', () => {
       },
     ]);
   });
+
+  it('按 workflow 中的 playlet 注册本轮新增的专用 Scene', () => {
+    const gdd = buildCourseGdd('course_ui');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'judge',
+      nodes: [
+        {
+          id: 'judge',
+          playletId: 'playlet-单选判断',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '判断说法是否正确。',
+            items: [
+              {
+                id: 'producer',
+                label: '植物通常是生产者。',
+                answer: true,
+              },
+            ],
+            successCriteria: '判断正确。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'evidence',
+          playletId: 'playlet-证据配对',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '配对结论与证据。',
+            claims: [{ id: 'plant_maker', label: '植物是生产者' }],
+            evidence: [
+              {
+                id: 'plant_photosynthesis',
+                label: '植物能制造养分',
+                claimId: 'plant_maker',
+              },
+            ],
+            successCriteria: '完成证据配对。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'dialogue',
+          playletId: 'playlet-对话选择',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '选择合适回应。',
+            startStepId: 'ask',
+            steps: [
+              {
+                id: 'ask',
+                speaker: '同伴',
+                text: '兔子为什么是消费者？',
+                choices: [
+                  {
+                    id: 'energy',
+                    text: '因为它吃植物获得能量。',
+                    correct: true,
+                  },
+                ],
+              },
+            ],
+            successCriteria: '选出合适回应。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'judge', to: 'evidence', when: 'success' },
+        { from: 'evidence', to: 'dialogue', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-单选判断';",
+    );
+    expect(main).toContain(
+      "game.scene.add('单选判断PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-证据配对';",
+    );
+    expect(main).toContain(
+      "game.scene.add('证据配对PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-对话选择';",
+    );
+    expect(main).toContain(
+      "game.scene.add('对话选择PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第三轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_ui');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'target',
+      nodes: [
+        {
+          id: 'target',
+          playletId: 'playlet-找目标',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '找出面积单位。',
+            items: [
+              { id: 'square_meter', label: '平方米', answer: true },
+              { id: 'meter', label: '米', answer: false },
+            ],
+            successCriteria: '选出所有目标项。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'anomaly',
+          playletId: 'playlet-找异常',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '找出异常单位。',
+            items: [
+              { id: 'square_meter', label: '平方米', answer: false },
+              { id: 'meter', label: '米', answer: true },
+            ],
+            successCriteria: '选出所有异常项。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'link',
+          playletId: 'playlet-连线匹配',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '连接概念和含义。',
+            items: [
+              {
+                id: 'area',
+                label: '面积',
+                pairId: 'surface_size',
+                side: 'left',
+              },
+              {
+                id: 'surface_size',
+                label: '平面区域大小',
+                pairId: 'area',
+                side: 'right',
+              },
+            ],
+            successCriteria: '完成所有连线。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'target', to: 'anomaly', when: 'success' },
+        { from: 'anomaly', to: 'link', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-找目标';",
+    );
+    expect(main).toContain(
+      "game.scene.add('找目标PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-找异常';",
+    );
+    expect(main).toContain(
+      "game.scene.add('找异常PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-连线匹配';",
+    );
+    expect(main).toContain(
+      "game.scene.add('连线匹配PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第四轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_ui');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'keywords',
+      nodes: [
+        {
+          id: 'keywords',
+          playletId: 'playlet-关键词提取',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '提取面积关键词。',
+            sourceText: '面积表示平面图形或物体表面的大小。',
+            keywords: [
+              { id: 'area', label: '面积', answer: true },
+              { id: 'length', label: '长度', answer: false },
+            ],
+            successCriteria: '选出关键词。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'acceptance',
+          playletId: 'playlet-需求清单验收',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '验收课程作品。',
+            reviewTarget: '检查课程是否有讲解、练习且不泄露答案。',
+            requirements: [
+              {
+                id: 'has_explanation',
+                label: '包含概念讲解',
+                required: true,
+                expected: true,
+              },
+              {
+                id: 'leak_answer',
+                label: '直接暴露答案',
+                forbidden: true,
+                expected: false,
+              },
+            ],
+            successCriteria: '必需项通过，禁止项未通过。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'annotation',
+          playletId: 'playlet-框选标注',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '框选面积定义。',
+            canvasText: '面积表示平面图形或物体表面的大小。',
+            regions: [
+              {
+                id: 'area_definition',
+                label: '面积定义',
+                target: true,
+                x: 0.5,
+                y: 0.45,
+                width: 0.5,
+                height: 0.2,
+              },
+            ],
+            successCriteria: '框选目标区域。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'keywords', to: 'acceptance', when: 'success' },
+        { from: 'acceptance', to: 'annotation', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-关键词提取';",
+    );
+    expect(main).toContain(
+      "game.scene.add('关键词提取PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-需求清单验收';",
+    );
+    expect(main).toContain(
+      "game.scene.add('需求清单验收PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-框选标注';",
+    );
+    expect(main).toContain(
+      "game.scene.add('框选标注PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第五轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_grid');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'timeline',
+      nodes: [
+        {
+          id: 'timeline',
+          playletId: 'playlet-时间线排序',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '排序解题流程。',
+            events: [
+              { id: 'read', label: '读题', timeLabel: '第一步', order: 1 },
+              { id: 'solve', label: '计算', timeLabel: '第二步', order: 2 },
+            ],
+            successCriteria: '时间线正确。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'wire',
+          playletId: 'playlet-流程接线',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '接好问题到结论。',
+            nodes: [
+              { id: 'question', label: '问题' },
+              { id: 'evidence', label: '证据' },
+              { id: 'conclusion', label: '结论' },
+            ],
+            edges: [
+              { from: 'question', to: 'evidence' },
+              { from: 'evidence', to: 'conclusion' },
+            ],
+            successCriteria: '流程正确。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'conditions',
+          playletId: 'playlet-条件组合推理',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '选择必要条件。',
+            conditions: [
+              { id: 'same_unit', label: '单位一致', required: true },
+              { id: 'number_only', label: '只看数字', required: false },
+            ],
+            conclusions: [
+              { id: 'valid', label: '可以比较', correct: true },
+            ],
+            successCriteria: '条件和结论正确。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'timeline', to: 'wire', when: 'success' },
+        { from: 'wire', to: 'conditions', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-时间线排序';",
+    );
+    expect(main).toContain(
+      "game.scene.add('时间线排序PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-流程接线';",
+    );
+    expect(main).toContain(
+      "game.scene.add('流程接线PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-条件组合推理';",
+    );
+    expect(main).toContain(
+      "game.scene.add('条件组合推理PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第六轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_grid');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'chain',
+      nodes: [
+        {
+          id: 'chain',
+          playletId: 'playlet-证据链拼接',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '拼接面积证据链。',
+            claim: '长方形面积是 24 平方厘米。',
+            chain: [
+              { id: 'given', label: '长 6、宽 4', order: 1 },
+              { id: 'formula', label: '面积 = 长 x 宽', order: 2 },
+              { id: 'result', label: '面积为 24', order: 3 },
+            ],
+            successCriteria: '证据链顺序正确。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'proof',
+          playletId: 'playlet-证明步骤补全',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '补全证明步骤。',
+            goal: '证明面积计算过程。',
+            steps: [
+              { id: 'given', label: '已知长 6、宽 4', order: 1, locked: true },
+              { id: 'formula', label: '面积 = 长 x 宽', order: 2 },
+              { id: 'substitute', label: '6 x 4 = 24', order: 3 },
+            ],
+            successCriteria: '证明步骤完整。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'mental',
+          playletId: 'playlet-口算挑战',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '完成口算。',
+            problems: [
+              {
+                id: 'p1',
+                prompt: '6 x 4 = ?',
+                answer: 24,
+                choices: [20, 24, 28],
+              },
+            ],
+            successCriteria: '完成全部题目。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'chain', to: 'proof', when: 'success' },
+        { from: 'proof', to: 'mental', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-证据链拼接';",
+    );
+    expect(main).toContain(
+      "game.scene.add('证据链拼接PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-证明步骤补全';",
+    );
+    expect(main).toContain(
+      "game.scene.add('证明步骤补全PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-口算挑战';",
+    );
+    expect(main).toContain(
+      "game.scene.add('口算挑战PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第七轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_grid');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'failure',
+      nodes: [
+        {
+          id: 'failure',
+          playletId: 'playlet-失败输出归因',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '找出面积单位失败原因。',
+            output: '把 4 平方米解释成 4 米长。',
+            expectedBehavior: '区分面积和长度。',
+            causes: [
+              { id: 'unit', label: '单位类型混淆', correct: true },
+              { id: 'number', label: '数字看错', correct: false },
+            ],
+            successCriteria: '选出根因。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'module',
+          playletId: 'playlet-模块定位',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '定位修复模块。',
+            systemTitle: '面积诊断流程',
+            modules: [
+              {
+                id: 'unit_checker',
+                label: '单位判断',
+                target: true,
+                x: 0.25,
+                y: 0.35,
+              },
+              {
+                id: 'skin',
+                label: '角色装扮',
+                target: false,
+                x: 0.75,
+                y: 0.35,
+              },
+            ],
+            successCriteria: '定位目标模块。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'coordinate',
+          playletId: 'playlet-坐标定位',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '点选目标坐标。',
+            grid: { columns: 5, rows: 4 },
+            targets: [{ id: 'point', label: '目标点', x: 2, y: 3 }],
+            successCriteria: '坐标正确。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'failure', to: 'module', when: 'success' },
+        { from: 'module', to: 'coordinate', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-失败输出归因';",
+    );
+    expect(main).toContain(
+      "game.scene.add('失败输出归因PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-模块定位';",
+    );
+    expect(main).toContain(
+      "game.scene.add('模块定位PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-坐标定位';",
+    );
+    expect(main).toContain(
+      "game.scene.add('坐标定位PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
+  it('按 workflow 注册第八轮新增的真实 playlet Scene', () => {
+    const gdd = buildCourseGdd('course_grid');
+    gdd.selectedPlan.workflow = {
+      startNodeId: 'maze',
+      nodes: [
+        {
+          id: 'maze',
+          playletId: 'playlet-迷宫寻路',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '规划迷宫路线。',
+            columns: 5,
+            rows: 5,
+            start: { x: 1, y: 1 },
+            end: { x: 5, y: 5 },
+            walls: [{ x: 2, y: 1 }],
+            expectedPath: [
+              { x: 1, y: 1 },
+              { x: 1, y: 2 },
+              { x: 2, y: 2 },
+              { x: 3, y: 2 },
+              { x: 4, y: 2 },
+              { x: 5, y: 2 },
+              { x: 5, y: 3 },
+              { x: 5, y: 4 },
+              { x: 5, y: 5 },
+            ],
+            successCriteria: '路线连续且避开障碍。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'assembly',
+          playletId: 'playlet-模块装配',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '装配课程生成链路。',
+            parts: [
+              { id: 'intake', label: '输入理解' },
+              { id: 'plan', label: '方案规划' },
+            ],
+            slots: [
+              { id: 'slot_1', label: '第一步', accepts: 'intake' },
+              { id: 'slot_2', label: '第二步', accepts: 'plan' },
+            ],
+            successCriteria: '组件放入正确槽位。',
+          },
+          styleBindingId: 'default',
+        },
+        {
+          id: 'slider',
+          playletId: 'playlet-滑杆调参',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '调节课程参数。',
+            params: [
+              {
+                id: 'pace',
+                label: '讲解速度',
+                min: 0,
+                max: 10,
+                value: 4,
+                targetMin: 5,
+                targetMax: 7,
+              },
+            ],
+            successCriteria: '参数进入目标区间。',
+          },
+          styleBindingId: 'default',
+        },
+      ],
+      edges: [
+        { from: 'maze', to: 'assembly', when: 'success' },
+        { from: 'assembly', to: 'slider', when: 'success' },
+      ],
+      recoveryPolicy: 'hint_then_retry',
+    };
+
+    const result = mapCourseGddToOpenGameScaffold(gdd);
+    const main = getGeneratedText(result, 'src/main.ts');
+
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene1 } from './playlets/playlet-迷宫寻路';",
+    );
+    expect(main).toContain(
+      "game.scene.add('迷宫寻路PlayletScene', WorkflowPlayletScene1);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene2 } from './playlets/playlet-模块装配';",
+    );
+    expect(main).toContain(
+      "game.scene.add('模块装配PlayletScene', WorkflowPlayletScene2);",
+    );
+    expect(main).toContain(
+      "import { PlayletScene as WorkflowPlayletScene3 } from './playlets/playlet-滑杆调参';",
+    );
+    expect(main).toContain(
+      "game.scene.add('滑杆调参PlayletScene', WorkflowPlayletScene3);",
+    );
+  });
+
 });
 
 function getCourseContent(
@@ -159,210 +808,4 @@ function firstSceneFor(archetype: CourseArchetype): string {
   if (archetype === 'course_grid') return 'GridLessonScene';
   if (archetype === 'course_td') return 'ReviewPrepScene';
   return 'LessonScene';
-}
-
-function buildCourseSpec(): CourseSpec {
-  return {
-    subject: '科学',
-    topic: '生态系统',
-    learningGoals: ['解释食物链', '识别生态系统中的角色'],
-    durationMinutes: 25,
-    studentProfile: {
-      grade: 5,
-      age: 11,
-      readingLevel: 'medium',
-      interests: ['探险', '收集'],
-      weakPoints: ['概念混淆'],
-      preferredInteraction: ['分类', '选择'],
-      guardianLimits: {
-        maxSessionMinutes: 30,
-        allowUploadedImages: true,
-        allowGeneratedVideo: false,
-        contentStrictness: 'strict',
-      },
-    },
-    styleSpec: {
-      theme: '森林调查',
-      palette: ['#14532D', '#FDE68A', '#38BDF8'],
-      visualMood: '自然明亮',
-      characterStyle: '调查员',
-      uiDensity: 'medium',
-      forbidden: ['惊吓', '抽卡'],
-    },
-    explanationDepth: {
-      depthLevel: 'deep',
-      priorKnowledgeCheck: true,
-      conceptLayers: [
-        {
-          concept: '生产者',
-          whyItMatters: '帮助理解能量来源。',
-          misconceptionToAddress: ['把所有植物和动物作用混为一谈'],
-          representation: 'case',
-        },
-        {
-          concept: '消费者',
-          whyItMatters: '帮助理解食物链关系。',
-          misconceptionToAddress: ['只按体型判断捕食关系'],
-          representation: 'visual_model',
-        },
-      ],
-      examplePlan: {
-        workedExamples: 2,
-        guidedPractice: 2,
-        independentChallenges: 2,
-        transferTasks: 1,
-      },
-      feedbackDepth: 'step_by_step',
-      masteryEvidence: ['能画出食物链', '能解释角色关系'],
-    },
-  };
-}
-
-function buildPlan(archetype: CourseArchetype): CoursePlanOption {
-  return {
-    id: 'balanced',
-    title: '生态网格调查',
-    courseArchetype: archetype,
-    gameplayType: archetype === 'course_td' ? '复习波次' : '分类观察',
-    learningLoop: ['讲解', '示例', '互动练习', '反馈', '评价'],
-    scenePlan: ['导入', '网格分类', '迁移挑战'],
-    assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
-    assetComplexity: 'medium',
-    score: {
-      learningFit: 90,
-      explanationDepthFit: 84,
-      fun: 82,
-      ageFit: 88,
-      implementationStability: 85,
-      cost: 80,
-      safety: 94,
-    },
-    recommendationReason: '分类任务适合承载角色关系推理。',
-    risks: ['需要控制网格数量，避免认知负担。'],
-  };
-}
-
-function buildCourseGdd(archetype: CourseArchetype): CourseGDD {
-  const courseSpec = buildCourseSpec();
-  return {
-    courseSpec,
-    selectedPlan: buildPlan(archetype),
-    lessonUnits: [
-      {
-        id: 'lesson_food_chain',
-        learningGoal: '解释食物链',
-        concept: '食物链',
-        explanationScript:
-          '食物链表示能量从生产者开始，沿着吃与被吃的关系传递。先找到能自己制造养分的植物，再观察动物之间的取食关系，就能判断箭头方向。',
-        interactionTask: '把森林角色拖到正确顺序，并完成一次迁移应用复盘。',
-        feedbackStrategy:
-          '正确时强调能量流向；错误时标记捕食关系混淆，并提示先找生产者。',
-        assessmentPointId: 'assessment_food_chain',
-      },
-      {
-        id: 'lesson_roles',
-        learningGoal: '识别生态系统中的角色',
-        concept: '生产者和消费者',
-        explanationScript:
-          '生态系统中的角色可以按获取能量的方式区分。植物通常是生产者，动物多为消费者，判断时不能只看体型大小。',
-        interactionTask: '分类森林角色，并说明一个新场景中的迁移判断理由。',
-        feedbackStrategy:
-          '正确时连接判断依据；错误时标记按体型判断的错因，并给出下一步观察提示。',
-        assessmentPointId: 'assessment_roles',
-      },
-    ],
-    interactionSpecs: [
-      {
-        id: 'interaction_food_chain',
-        lessonUnitId: 'lesson_food_chain',
-        type: 'grid_sort',
-        prompt: '把草、兔子、狐狸放入正确的食物链顺序。',
-        expectedAction: '按能量流向完成排序。',
-        feedback: {
-          correct: '顺序正确，能量从生产者流向消费者。',
-          incorrect: '顺序还不对，先找能自己制造养分的角色。',
-          misconceptionTag: 'energy_flow_reversed',
-          hint: '先找植物，再看谁吃谁。',
-        },
-      },
-      {
-        id: 'interaction_roles',
-        lessonUnitId: 'lesson_roles',
-        type: 'card_match',
-        prompt: '把角色卡片分到生产者或消费者。',
-        expectedAction: '按获取能量方式分类。',
-        feedback: {
-          correct: '分类正确，你用了能量来源作为依据。',
-          incorrect: '不要只看体型大小，想一想它怎样获得能量。',
-          misconceptionTag: 'size_based_role_guess',
-          hint: '植物通常能自己制造养分。',
-        },
-      },
-    ],
-    assessmentSpec: {
-      items: [
-        {
-          id: 'assessment_food_chain',
-          learningGoal: '解释食物链',
-          prompt: '为什么草应该放在食物链开头？',
-          options: ['因为草是生产者', '因为草体型最小'],
-          correctIndex: 0,
-          answer: '因为草是生产者。',
-          explanation:
-            '草能通过光合作用制造养分，是能量进入食物链的起点，所以应放在开头。',
-          misconceptionTag: 'size_based_order',
-          hint: '判断开头时先看谁能制造养分。',
-        },
-        {
-          id: 'assessment_roles',
-          learningGoal: '识别生态系统中的角色',
-          prompt: '兔子为什么是消费者？',
-          options: ['因为它吃植物获得能量', '因为它生活在森林'],
-          correctIndex: 0,
-          answer: '因为兔子吃植物获得能量。',
-          explanation:
-            '消费者不能像植物一样自己制造养分，需要通过取食获得能量，兔子吃植物所以是消费者。',
-          misconceptionTag: 'habitat_based_role',
-          hint: '角色分类要看能量来源。',
-        },
-      ],
-      masteryCriteria: [
-        '能解释食物链中的能量流向',
-        '能迁移判断新角色的分类理由',
-      ],
-    },
-    assetPlan: {
-      images: [{ key: 'forest_grid_bg', description: '明亮森林网格背景' }],
-      audio: [
-        { key: 'sfx_correct', description: '答对提示音', audioType: 'sfx' },
-      ],
-    },
-    narrationPlan: {
-      segments: [
-        {
-          id: 'lesson_food_chain',
-          name: '食物链讲解',
-          text: '食物链表示能量从生产者开始传递。',
-          targetScene: '导入',
-        },
-        {
-          id: 'lesson_roles',
-          name: '生态角色讲解',
-          text: '按获取能量的方式区分生产者和消费者。',
-          targetScene: '网格分类',
-        },
-      ],
-    },
-    validationPlan: {
-      requiredChecks: [
-        'schema 合法',
-        '学习目标闭环',
-        '讲解深度',
-        '互动反馈',
-        '评价解析',
-      ],
-      browserFlow: ['进入导入', '完成网格分类', '看到反馈'],
-      fallbackChecks: ['TTS 失败显示字幕', '视频关闭不阻断流程'],
-    },
-  };
 }

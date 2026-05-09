@@ -71,6 +71,11 @@ export interface StudentProfile {
   interests: string[];
   weakPoints?: string[];
   preferredInteraction?: string[];
+  ttsPreference?: {
+    voice?: string;
+    speed?: number;
+    emotion?: string;
+  };
   guardianLimits?: {
     maxSessionMinutes: number;
     allowUploadedImages: boolean;
@@ -352,6 +357,15 @@ export const courseSpecSchema = {
         preferredInteraction: {
           type: 'array',
           items: nonEmptyStringSchema,
+        },
+        ttsPreference: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            voice: nonEmptyStringSchema,
+            speed: { type: 'number', minimum: 0.5, maximum: 2 },
+            emotion: nonEmptyStringSchema,
+          },
         },
         guardianLimits: {
           type: 'object',

@@ -1,20 +1,38 @@
 {
-  "prompt": "完成「拖拽分箱」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "把森林角色拖到正确分箱。",
+  "bins": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "producer",
+      "label": "生产者"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "consumer",
+      "label": "消费者"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "items": [
+    {
+      "id": "grass",
+      "label": "草",
+      "binId": "producer",
+      "explanation": "草能通过光合作用制造养分。"
+    },
+    {
+      "id": "rabbit",
+      "label": "兔子",
+      "binId": "consumer",
+      "explanation": "兔子吃植物获得能量。"
+    },
+    {
+      "id": "fox",
+      "label": "狐狸",
+      "binId": "consumer",
+      "explanation": "狐狸捕食其他动物获得能量。"
+    }
+  ],
+  "successCriteria": "学生能按能量来源完成分类。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "分类正确，继续进入下一段玩法。",
+    "partial": "红色卡片需要重新判断能量来源。"
   }
 }

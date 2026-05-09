@@ -1,15 +1,27 @@
 {
-  "prompt": "完成「证据配对」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "把每个结论配到最直接的证据。",
+  "claims": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "plant_maker",
+      "label": "植物是生产者"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "rabbit_consumer",
+      "label": "兔子是消费者"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "plant_photosynthesis",
+      "label": "植物能利用阳光制造养分",
+      "claimId": "plant_maker",
+      "explanation": "能自己制造养分，是生产者的重要证据。"
+    },
+    {
+      "id": "rabbit_eats",
+      "label": "兔子需要吃植物获得能量",
+      "claimId": "rabbit_consumer",
+      "explanation": "需要摄入其他生物获得能量，符合消费者特征。"
     }
   ],
   "successCriteria": "学生完成操作并产出可写入学习报告的证据。",

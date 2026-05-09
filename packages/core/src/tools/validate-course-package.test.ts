@@ -212,12 +212,35 @@ this.load.image('forest_grid_bg', 'assets/forest_grid_bg.png');
     );
   });
 
+  it('TTS 失败后存在字幕降级 manifest 时只产生 warning', async () => {
+    const packageDir = await writeCoursePackage({
+      narrationManifest: buildSubtitleFallbackNarrationManifest(),
+    });
+    const tool = new ValidateCoursePackageTool(config);
+
+    const result = await tool.buildAndExecute(
+      {
+        packageDir,
+        courseGdd: buildCourseGdd(),
+      },
+      new AbortController().signal,
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(result.llmContent).toContain('"passed": true');
+    expect(result.llmContent).toContain('narration_subtitle_fallback');
+    expect(result.llmContent).not.toContain(
+      'narration_audio_or_fallback_missing',
+    );
+  });
+
   async function writeCoursePackage(
     options: {
       mutateCourseContent?: (content: CourseContentJson) => void;
       mainContent?: string;
       extraSourceContent?: string;
       assetPack?: Record<string, unknown>;
+      narrationManifest?: Record<string, unknown>;
       skipPlayletPackages?: boolean;
     } = {},
   ): Promise<string> {
@@ -239,7 +262,11 @@ this.load.image('forest_grid_bg', 'assets/forest_grid_bg.png');
     );
     await fs.writeFile(
       path.join(packageDir, 'public/assets/narration/narration-manifest.json'),
-      JSON.stringify(buildNarrationManifest(), null, 2),
+      JSON.stringify(
+        options.narrationManifest ?? buildNarrationManifest(),
+        null,
+        2,
+      ),
     );
     await fs.writeFile(
       path.join(packageDir, 'src/main.ts'),
@@ -681,6 +708,23 @@ function buildNarrationManifest(): Record<string, unknown> {
         status: 'ready',
       },
     ],
+  };
+}
+
+function buildSubtitleFallbackNarrationManifest(): Record<string, unknown> {
+  const manifest = buildNarrationManifest();
+  return {
+    ...manifest,
+    fallbackMode: 'subtitle',
+    warnings: ['TTS 失败，已降级字幕。'],
+    segments: (manifest.segments as Array<Record<string, unknown>>).map(
+      (segment) => ({
+        ...segment,
+        audio_uri: undefined,
+        local_path: undefined,
+        status: 'fallback_subtitle',
+      }),
+    ),
   };
 }
 

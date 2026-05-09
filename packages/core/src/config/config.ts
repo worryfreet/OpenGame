@@ -63,7 +63,11 @@ import { TodoWriteTool } from '../tools/todoWrite.js';
 import { ToolRegistry } from '../tools/tool-registry.js';
 import { GameTypeClassifierTool } from '../tools/game-type-classifier.js';
 import { GenerateGDDTool } from '../tools/generate-gdd.js';
+import { CompleteCourseIntakeTool } from '../tools/complete-course-intake.js';
 import { GenerateCoursePlanTool } from '../tools/generate-course-plan.js';
+import { GenerateStylePreviewTool } from '../tools/generate-style-preview.js';
+import { ReviseCoursePlanTool } from '../tools/revise-course-plan.js';
+import { GenerateNextCourseSpecTool } from '../tools/generate-next-course-spec.js';
 import { GenerateCourseGDDTool } from '../tools/generate-course-gdd.js';
 import { CourseTtsManifestTool } from '../tools/course-tts-manifest.js';
 import { ValidateCoursePackageTool } from '../tools/validate-course-package.js';
@@ -1432,7 +1436,11 @@ export class Config {
     }
     registerCoreTool(GameTypeClassifierTool, this);
     registerCoreTool(GenerateGDDTool, this);
+    registerCoreTool(CompleteCourseIntakeTool);
     registerCoreTool(GenerateCoursePlanTool, this);
+    registerCoreTool(GenerateStylePreviewTool);
+    registerCoreTool(ReviseCoursePlanTool);
+    registerCoreTool(GenerateNextCourseSpecTool);
     registerCoreTool(GenerateCourseGDDTool, this);
     registerCoreTool(CourseTtsManifestTool, this);
     registerCoreTool(ValidateCoursePackageTool, this);

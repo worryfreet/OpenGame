@@ -25,7 +25,11 @@ import { GitService } from '../services/gitService.js';
 import { ShellTool } from '../tools/shell.js';
 import { ReadFileTool } from '../tools/read-file.js';
 import { GrepTool } from '../tools/grep.js';
+import { CompleteCourseIntakeTool } from '../tools/complete-course-intake.js';
 import { GenerateCoursePlanTool } from '../tools/generate-course-plan.js';
+import { GenerateStylePreviewTool } from '../tools/generate-style-preview.js';
+import { ReviseCoursePlanTool } from '../tools/revise-course-plan.js';
+import { GenerateNextCourseSpecTool } from '../tools/generate-next-course-spec.js';
 import { GenerateCourseGDDTool } from '../tools/generate-course-gdd.js';
 import { CourseTtsManifestTool } from '../tools/course-tts-manifest.js';
 import { ValidateCoursePackageTool } from '../tools/validate-course-package.js';
@@ -109,6 +113,18 @@ vi.mock('../tools/web-fetch', () => ({
 }));
 vi.mock('../tools/generate-course-plan.js', () => ({
   GenerateCoursePlanTool: createToolMock('generate_course_plan'),
+}));
+vi.mock('../tools/generate-style-preview.js', () => ({
+  GenerateStylePreviewTool: createToolMock('generate_style_preview'),
+}));
+vi.mock('../tools/revise-course-plan.js', () => ({
+  ReviseCoursePlanTool: createToolMock('revise_course_plan'),
+}));
+vi.mock('../tools/generate-next-course-spec.js', () => ({
+  GenerateNextCourseSpecTool: createToolMock('generate_next_course_spec'),
+}));
+vi.mock('../tools/complete-course-intake.js', () => ({
+  CompleteCourseIntakeTool: createToolMock('complete_course_intake'),
 }));
 vi.mock('../tools/generate-course-gdd.js', () => ({
   GenerateCourseGDDTool: createToolMock('generate_course_gdd'),
@@ -701,6 +717,94 @@ describe('Server Config (config.ts)', () => {
         (call) => call[0] instanceof vi.mocked(GenerateCoursePlanTool),
       );
       expect(wasCoursePlanToolRegistered).toBe(true);
+    });
+
+    it('should register the complete course intake tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['CompleteCourseIntake'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasCourseIntakeToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(CompleteCourseIntakeTool),
+      );
+      expect(wasCourseIntakeToolRegistered).toBe(true);
+    });
+
+    it('should register the style preview tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['GenerateStylePreview'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasStylePreviewToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(GenerateStylePreviewTool),
+      );
+      expect(wasStylePreviewToolRegistered).toBe(true);
+    });
+
+    it('should register the revise course plan tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['ReviseCoursePlan'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasRevisionToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(ReviseCoursePlanTool),
+      );
+      expect(wasRevisionToolRegistered).toBe(true);
+    });
+
+    it('should register the next course spec tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['GenerateNextCourseSpec'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasNextCourseToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(GenerateNextCourseSpecTool),
+      );
+      expect(wasNextCourseToolRegistered).toBe(true);
     });
 
     it('should register the course GDD tool when enabled explicitly', async () => {

@@ -39,6 +39,8 @@ describe('GenerateCoursePlanTool', () => {
     expect(result.error).toBeUndefined();
     expect(result.llmContent).toContain('generate_course_gdd');
     expect(result.llmContent).toContain('selectedPlanId');
+    expect(result.llmContent).toContain('confirmationSummary');
+    expect(result.returnDisplay).toContain('预计成本');
     expect(result.returnDisplay).toContain('stable');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });

@@ -5,7 +5,7 @@
   "concreteGameplay": "滑杆调参",
   "engineFamily": "simulation",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "滑杆调参PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

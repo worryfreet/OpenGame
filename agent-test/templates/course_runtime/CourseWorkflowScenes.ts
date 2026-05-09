@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { courseContent } from '../courseContent';
 import { GenericPlayletScene } from '../playlets/shared';
+import { resolvePlayletSceneKey } from '../playlets/shared';
 import { WorkflowRunner } from './WorkflowRunner';
 
 export class WorkflowEntryScene extends Phaser.Scene {
@@ -11,7 +12,7 @@ export class WorkflowEntryScene extends Phaser.Scene {
   create(): void {
     const runner = new WorkflowRunner(courseContent);
     const node = runner.getCurrentNode();
-    this.scene.start('GenericPlayletScene', { runner, node });
+    this.scene.start(resolvePlayletSceneKey(node.playletId), { runner, node });
   }
 }
 

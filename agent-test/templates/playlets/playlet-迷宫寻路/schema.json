@@ -3,7 +3,8 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "start",
+    "end",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +12,63 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "columns": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 8
+    },
+    "rows": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 8
+    },
+    "start": {
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "end": {
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "walls": {
       "type": "array",
-      "minItems": 1
+      "items": {
+        "type": "object"
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "expectedPath": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
     },
     "successCriteria": {
       "type": "string",

@@ -1,20 +1,29 @@
 {
-  "prompt": "完成「证据链拼接」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "把这些卡片拼成能支持结论的证据链。",
+  "claim": "结论：长方形面积是 24 平方厘米。",
+  "chain": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "given",
+      "label": "长方形长 6 厘米、宽 4 厘米",
+      "order": 1,
+      "role": "事实"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "formula",
+      "label": "长方形面积 = 长 x 宽",
+      "order": 2,
+      "role": "规则"
+    },
+    {
+      "id": "result",
+      "label": "6 x 4 = 24，所以面积为 24 平方厘米",
+      "order": 3,
+      "role": "结论"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "按事实、规则、结论的顺序拼接证据。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "证据链成立，继续进入下一段玩法。",
+    "partial": "先确认哪张卡是最基础的已知事实。"
   }
 }

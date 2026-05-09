@@ -1,11 +1,7 @@
 {
   "type": "object",
   "additionalProperties": true,
-  "required": [
-    "prompt",
-    "items",
-    "successCriteria"
-  ],
+  "required": ["prompt", "items", "successCriteria"],
   "properties": {
     "prompt": {
       "type": "string",
@@ -13,7 +9,32 @@
     },
     "items": {
       "type": "array",
-      "minItems": 1
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "pairId", "side"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pairId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "side": {
+            "type": "string",
+            "enum": ["left", "right"]
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

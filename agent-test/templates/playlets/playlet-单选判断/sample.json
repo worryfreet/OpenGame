@@ -1,18 +1,20 @@
 {
-  "prompt": "完成「单选判断」玩法任务，并说明关键理由。",
+  "prompt": "判断下列说法是否符合面积概念。",
   "items": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "area_unit",
+      "label": "面积单位用于描述平面区域的大小。",
+      "answer": true,
+      "explanation": "面积关注覆盖了多少平面区域。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "perimeter_area",
+      "label": "周长和面积表示完全相同的量。",
+      "answer": false,
+      "explanation": "周长描述边界长度，面积描述区域大小。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "逐项判断，全部正确后进入下一段。",
   "feedback": {
     "success": "操作正确，继续进入下一段玩法。",
     "partial": "已经接近目标，先查看提示再试一次。"

@@ -1,18 +1,42 @@
 {
-  "prompt": "完成「模块装配」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "把课程生成链路的组件装配到正确流程位置。",
+  "assemblyTitle": "生成链路",
+  "parts": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "intake",
+      "label": "输入理解",
+      "description": "补齐年级、目标和限制"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "plan",
+      "label": "方案规划",
+      "description": "比较玩法和课程深度"
+    },
+    {
+      "id": "validate",
+      "label": "发布校验",
+      "description": "检查资源、运行和安全"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "slots": [
+    {
+      "id": "slot_1",
+      "label": "第一步",
+      "accepts": "intake",
+      "hint": "先把自然语言输入转成结构化课程需求。"
+    },
+    {
+      "id": "slot_2",
+      "label": "第二步",
+      "accepts": "plan"
+    },
+    {
+      "id": "slot_3",
+      "label": "第三步",
+      "accepts": "validate"
+    }
+  ],
+  "successCriteria": "每个槽位必须装入匹配的功能组件。",
   "feedback": {
     "success": "操作正确，继续进入下一段玩法。",
     "partial": "已经接近目标，先查看提示再试一次。"

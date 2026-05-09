@@ -3,7 +3,8 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "canvasText",
+    "regions",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +12,56 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "canvasText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "regions": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "target",
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "boolean"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "required": [
     "prompt",
-    "items",
+    "modules",
     "successCriteria"
   ],
   "properties": {
@@ -11,9 +11,54 @@
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "systemTitle": {
+      "type": "string"
+    },
+    "modules": {
       "type": "array",
-      "minItems": 1
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "target",
+          "x",
+          "y"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "target": {
+            "type": "boolean"
+          },
+          "x": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "hint": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",

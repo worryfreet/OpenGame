@@ -36,6 +36,14 @@ export * from './course/validation.js';
 export * from './course/courseGddMapper.js';
 export * from './course/tts/lessoninTtsService.js';
 export * from './course/tts/narrationManifest.js';
+export * from './course/product/intakeSession.js';
+export * from './course/product/preferenceProfile.js';
+export * from './course/product/learningState.js';
+export * from './course/product/guardianPolicy.js';
+export * from './course/product/generationRecovery.js';
+export * from './course/product/stylePreview.js';
+export * from './course/product/courseRevision.js';
+export * from './course/product/nextCoursePlanner.js';
 
 // Export utilities
 export * from './utils/paths.js';
@@ -134,7 +142,11 @@ export * from './tools/task.js';
 export * from './tools/skill.js';
 export * from './tools/todoWrite.js';
 export * from './tools/exitPlanMode.js';
+export * from './tools/complete-course-intake.js';
 export * from './tools/generate-course-plan.js';
+export * from './tools/generate-style-preview.js';
+export * from './tools/revise-course-plan.js';
+export * from './tools/generate-next-course-spec.js';
 export * from './tools/generate-course-gdd.js';
 export * from './tools/course-tts-manifest.js';
 export * from './tools/validate-course-package.js';

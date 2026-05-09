@@ -1,20 +1,30 @@
 {
-  "prompt": "完成「开关组合」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "调整开关组合，让系统适合第一次学习面积概念。",
+  "targetSummary": "目标：先示范，再分步提示，不直接进入挑战。",
+  "switches": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "example",
+      "label": "显示例题",
+      "description": "开启后先出现示范题。",
+      "initialOn": false,
+      "targetOn": true,
+      "hint": "学生第一次接触概念时需要示范题。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "hard_mode",
+      "label": "挑战模式",
+      "description": "开启后直接进入高难题。",
+      "initialOn": true,
+      "targetOn": false,
+      "hint": "当前目标是入门理解，挑战模式应先关闭。"
+    },
+    {
+      "id": "hint",
+      "label": "分步提示",
+      "description": "错误后给出分步提示。",
+      "initialOn": false,
+      "targetOn": true
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
-  "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
-  }
+  "successCriteria": "所有开关状态都要符合目标条件。"
 }

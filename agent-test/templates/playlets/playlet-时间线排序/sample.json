@@ -1,20 +1,29 @@
 {
-  "prompt": "完成「时间线排序」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "把面积问题的解题过程按时间线排序。",
+  "events": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "read_problem",
+      "label": "读题并圈出长和宽",
+      "timeLabel": "第一步",
+      "order": 1
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "apply_formula",
+      "label": "用长乘宽计算面积",
+      "timeLabel": "第二步",
+      "order": 2
+    },
+    {
+      "id": "write_unit",
+      "label": "写出平方单位",
+      "timeLabel": "第三步",
+      "order": 3,
+      "explanation": "单位要在计算后确认，不能先省略。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "学生能按先读题、再计算、最后写单位的顺序完成任务。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "时间线正确，继续进入下一段玩法。",
+    "partial": "检查哪个事件应该更早发生。"
   }
 }

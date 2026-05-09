@@ -260,7 +260,7 @@ export function mapCourseGddToOpenGameScaffold(
       },
       {
         path: `${outputDir}/src/main.ts`,
-        content: buildMainSource(archetype),
+        content: buildMainSource(archetype, selectedPlayletIds),
       },
       {
         path: `${outputDir}/src/LevelManager.ts`,
@@ -481,10 +481,22 @@ function normalizeInteractionType(type: string): string {
   return 'choice';
 }
 
-function buildMainSource(archetype: CourseArchetype): string {
-  const sceneImports = buildSceneImports(archetype);
-  const sceneRegistrations = sceneKeysForArchetype(archetype)
-    .map((sceneKey) => `game.scene.add('${sceneKey}', ${sceneKey});`)
+function buildMainSource(
+  archetype: CourseArchetype,
+  playletIds: string[] = [],
+): string {
+  const sceneImports = buildSceneImports(archetype, playletIds);
+  const sceneRegistrations = [
+    ...sceneKeysForArchetype(archetype).map((sceneKey) => ({
+      key: sceneKey,
+      symbol: sceneKey,
+    })),
+    ...playletIds.map((playletId, index) => ({
+      key: buildPlayletSceneKey(playletId),
+      symbol: buildPlayletSceneSymbol(index),
+    })),
+  ]
+    .map(({ key, symbol }) => `game.scene.add('${key}', ${symbol});`)
     .join('\n');
 
   return `import Phaser from 'phaser';
@@ -538,18 +550,30 @@ game.scene.add('GameOverUIScene', GameOverUIScene);
 `;
 }
 
-function buildSceneImports(archetype: CourseArchetype): string {
+function buildSceneImports(
+  archetype: CourseArchetype,
+  playletIds: string[] = [],
+): string {
   const workflowImports =
     "import { WorkflowEntryScene, GenericPlayletScene, CourseReportScene } from './course_runtime/CourseWorkflowScenes';";
+  const playletImports = playletIds
+    .map(
+      (playletId) =>
+        `import { PlayletScene as ${buildPlayletSceneSymbol(playletIds.indexOf(playletId))} } from './playlets/${playletId}';`,
+    )
+    .join('\n');
   if (archetype === 'course_grid') {
     return `${workflowImports}
+${playletImports}
 import { GridLessonScene, GridPracticeScene } from './scenes/CourseGridScenes';`;
   }
   if (archetype === 'course_td') {
     return `${workflowImports}
+${playletImports}
 import { ReviewPrepScene, ReviewWaveScene } from './scenes/CourseTDScenes';`;
   }
   return `${workflowImports}
+${playletImports}
 import { LessonScene, PracticeScene, BattleScene } from './scenes/CourseUIScenes';`;
 }
 
@@ -615,6 +639,20 @@ function sceneKeysForArchetype(archetype: CourseArchetype): string[] {
 
 function normalizeSceneKey(scene: string, fallback: string): string {
   return scene.trim() || fallback;
+}
+
+function buildPlayletSceneKey(playletId: string): string {
+  return `${playletId
+    .replace(/^playlet-/, '')
+    .replace(/[^a-zA-Z0-9\u4E00-\u9FFF]+/g, '-')
+    .split('-')
+    .filter(Boolean)
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join('')}PlayletScene`;
+}
+
+function buildPlayletSceneSymbol(index: number): string {
+  return `WorkflowPlayletScene${index + 1}`;
 }
 
 function requireGoalId(goalIds: Map<string, string>, goal: string): string {

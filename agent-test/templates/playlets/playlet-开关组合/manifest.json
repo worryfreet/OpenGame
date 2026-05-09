@@ -5,7 +5,7 @@
   "concreteGameplay": "开关组合",
   "engineFamily": "simulation",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "开关组合PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

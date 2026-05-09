@@ -1,20 +1,36 @@
 {
-  "prompt": "完成「卡片配对」玩法任务，并说明关键理由。",
+  "prompt": "把左侧概念和右侧证据配成一组。",
   "items": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "producer",
+      "label": "生产者",
+      "pairId": "plant_energy",
+      "side": "left",
+      "explanation": "生产者能自己制造养分，是能量起点。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "consumer",
+      "label": "消费者",
+      "pairId": "eat_for_energy",
+      "side": "left",
+      "explanation": "消费者通过取食获得能量。"
+    },
+    {
+      "id": "plant_energy",
+      "label": "植物制造养分",
+      "pairId": "producer",
+      "side": "right"
+    },
+    {
+      "id": "eat_for_energy",
+      "label": "吃其他生物获得能量",
+      "pairId": "consumer",
+      "side": "right"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "学生能把概念和关键证据一一对应。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "配对正确，继续进入下一段玩法。",
+    "partial": "先找每张卡的判断依据。"
   }
 }

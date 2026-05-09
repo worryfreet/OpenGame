@@ -13,7 +13,45 @@
     },
     "items": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pairId": {
+            "type": "string"
+          },
+          "matchId": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "leftItems": {
+      "type": "array"
+    },
+    "rightItems": {
+      "type": "array"
     },
     "successCriteria": {
       "type": "string",

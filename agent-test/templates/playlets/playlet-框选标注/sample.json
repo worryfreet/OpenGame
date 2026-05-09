@@ -1,20 +1,38 @@
 {
-  "prompt": "完成「框选标注」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "在材料中框选面积相关内容。",
+  "canvasText": "面积：平面图形或物体表面的大小。常用单位包括平方米和平方厘米。\n周长：围成图形一周的长度，常用单位包括米和厘米。",
+  "regions": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "area_definition",
+      "label": "面积定义",
+      "target": true,
+      "x": 0.42,
+      "y": 0.38,
+      "width": 0.56,
+      "height": 0.18
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "area_units",
+      "label": "面积单位",
+      "target": true,
+      "x": 0.55,
+      "y": 0.54,
+      "width": 0.34,
+      "height": 0.14
+    },
+    {
+      "id": "perimeter_definition",
+      "label": "周长定义",
+      "target": false,
+      "x": 0.42,
+      "y": 0.72,
+      "width": 0.56,
+      "height": 0.18
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "框选面积定义和面积单位，避开周长内容。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "标注正确。",
+    "partial": "红框需要重新判断。"
   }
 }

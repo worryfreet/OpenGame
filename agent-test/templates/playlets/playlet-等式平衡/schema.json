@@ -1,26 +1,57 @@
 {
   "type": "object",
   "additionalProperties": true,
-  "required": [
-    "prompt",
-    "items",
-    "successCriteria"
-  ],
+  "required": ["prompt", "slots", "options", "successCriteria"],
   "properties": {
     "prompt": {
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "terms": {
       "type": "array",
-      "minItems": 1
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "value", "side"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "value": { "type": "number" },
+          "side": { "enum": ["left", "right"] }
+        }
+      }
+    },
+    "slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "side", "accepts"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "side": { "enum": ["left", "right"] },
+          "accepts": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "value"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "value": {
+            "oneOf": [{ "type": "number" }, { "type": "string" }]
+          }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",
       "minLength": 1
-    },
-    "feedback": {
-      "type": "object"
     }
   }
 }

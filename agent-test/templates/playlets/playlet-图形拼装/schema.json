@@ -1,26 +1,52 @@
 {
   "type": "object",
   "additionalProperties": true,
-  "required": [
-    "prompt",
-    "items",
-    "successCriteria"
-  ],
+  "required": ["prompt", "pieces", "slots", "successCriteria"],
   "properties": {
     "prompt": {
       "type": "string",
       "minLength": 1
     },
-    "items": {
+    "targetTitle": {
+      "type": "string"
+    },
+    "pieces": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "shape": { "enum": ["rect", "circle", "triangle"] },
+          "color": {
+            "oneOf": [{ "type": "number" }, { "type": "string" }]
+          }
+        }
+      }
+    },
+    "slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "accepts"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "accepts": { "type": "string", "minLength": 1 },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "type": "number" },
+          "height": { "type": "number" },
+          "hint": { "type": "string" }
+        }
+      }
     },
     "successCriteria": {
       "type": "string",
       "minLength": 1
-    },
-    "feedback": {
-      "type": "object"
     }
   }
 }

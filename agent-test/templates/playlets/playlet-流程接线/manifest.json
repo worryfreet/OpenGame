@@ -5,7 +5,7 @@
   "concreteGameplay": "流程接线",
   "engineFamily": "grid",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "流程接线PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

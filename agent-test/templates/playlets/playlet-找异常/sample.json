@@ -1,20 +1,32 @@
 {
-  "prompt": "完成「找异常」玩法任务，并说明关键理由。",
+  "prompt": "找出不是面积单位的异常项。",
   "items": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "square_meter",
+      "label": "平方米",
+      "answer": false
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
+      "id": "meter",
+      "label": "米",
+      "answer": true,
+      "reason": "米只描述长度。"
+    },
+    {
+      "id": "square_centimeter",
+      "label": "平方厘米",
       "answer": false
+    },
+    {
+      "id": "kilogram",
+      "label": "千克",
+      "answer": true,
+      "reason": "千克描述质量。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "选中所有异常项后提交。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "异常项全部找对，继续进入下一段玩法。",
+    "partial": "异常判断还不稳定，回看分类规则。"
   }
 }

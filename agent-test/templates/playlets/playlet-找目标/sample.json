@@ -1,20 +1,32 @@
 {
-  "prompt": "完成「找目标」玩法任务，并说明关键理由。",
+  "prompt": "找出所有面积单位。",
   "items": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
+      "id": "square_meter",
+      "label": "平方米",
+      "answer": true,
+      "explanation": "平方米描述平面区域大小。"
+    },
+    {
+      "id": "meter",
+      "label": "米",
+      "answer": false,
+      "explanation": "米是长度单位。"
+    },
+    {
+      "id": "square_centimeter",
+      "label": "平方厘米",
       "answer": true
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
+      "id": "kilogram",
+      "label": "千克",
       "answer": false
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "选中所有目标项后提交。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "目标全部找对，继续进入下一段玩法。",
+    "partial": "还有项目需要调整，先对照单位含义。"
   }
 }

@@ -1,15 +1,25 @@
 {
-  "prompt": "完成「对话选择」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "选择最能帮助同伴理解概念的回应。",
+  "startStepId": "ask_reason",
+  "steps": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
-    },
-    {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "ask_reason",
+      "speaker": "学习伙伴",
+      "text": "为什么这道题不能只看数字大小就下结论？",
+      "choices": [
+        {
+          "id": "compare_unit",
+          "text": "因为还要比较单位和题目条件。",
+          "correct": true,
+          "feedback": "回应抓住了关键条件。"
+        },
+        {
+          "id": "guess",
+          "text": "因为数字大的答案一定更接近。",
+          "correct": false,
+          "feedback": "只看数字会忽略单位和关系。"
+        }
+      ]
     }
   ],
   "successCriteria": "学生完成操作并产出可写入学习报告的证据。",

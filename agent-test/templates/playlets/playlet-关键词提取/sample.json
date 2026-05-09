@@ -1,20 +1,31 @@
 {
-  "prompt": "完成「关键词提取」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "从材料中提取能说明面积含义的关键词。",
+  "sourceText": "面积表示平面图形或物体表面的大小。学习面积时，我们常用平方米、平方厘米等单位描述一块区域有多大。",
+  "keywords": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
+      "id": "area",
+      "label": "面积",
       "answer": true
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
+      "id": "surface_size",
+      "label": "表面大小",
+      "answer": true
+    },
+    {
+      "id": "meter",
+      "label": "米",
       "answer": false
+    },
+    {
+      "id": "square_meter",
+      "label": "平方米",
+      "answer": true
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "选中所有关键概念和面积单位，避开长度单位。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "关键词提取正确。",
+    "partial": "保留绿色项目，再调整红色项目。"
   }
 }

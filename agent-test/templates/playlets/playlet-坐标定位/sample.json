@@ -1,20 +1,29 @@
 {
-  "prompt": "完成「坐标定位」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "在坐标网格中点出面积公式的关键位置。",
+  "targetSummary": "目标：单位检查点 (2,2)、面积公式点 (4,3)",
+  "grid": {
+    "columns": 5,
+    "rows": 4
+  },
+  "targets": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "unit_checkpoint",
+      "label": "单位检查点",
+      "x": 2,
+      "y": 2,
+      "hint": "先横向找到第 2 列，再纵向找到第 2 行。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "formula_point",
+      "label": "面积公式点",
+      "x": 4,
+      "y": 3,
+      "hint": "面积公式点在第 4 列第 3 行。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "点选全部目标坐标，不要选择干扰格。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "坐标定位正确，继续进入下一段玩法。",
+    "partial": "按“先列后行”的顺序重新定位。"
   }
 }

@@ -1,20 +1,43 @@
 {
-  "prompt": "完成「口算挑战」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "选择每道口算题的正确答案。",
+  "problems": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "p1",
+      "prompt": "8 + 7 = ?",
+      "answer": 15,
+      "choices": [
+        13,
+        15,
+        16
+      ],
+      "explanation": "8 + 7 可以拆成 8 + 2 + 5。"
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "p2",
+      "prompt": "6 x 4 = ?",
+      "answer": 24,
+      "choices": [
+        20,
+        24,
+        28
+      ],
+      "explanation": "6 个 4 相加等于 24。"
+    },
+    {
+      "id": "p3",
+      "prompt": "30 - 12 = ?",
+      "answer": 18,
+      "choices": [
+        16,
+        18,
+        22
+      ],
+      "explanation": "先算 30 - 10 = 20，再减 2。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "successCriteria": "完成全部口算题并记录正确率。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "计算正确，继续进入下一题。",
+    "partial": "再算一次，注意进位、退位或乘法意义。"
   }
 }

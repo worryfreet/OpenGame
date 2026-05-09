@@ -5,7 +5,7 @@
   "concreteGameplay": "迷宫寻路",
   "engineFamily": "grid",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "迷宫寻路PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

@@ -1,20 +1,15 @@
 {
-  "prompt": "完成「图形拼装」玩法任务，并说明关键理由。",
-  "items": [
-    {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
-    },
-    {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
-    }
+  "prompt": "把图形零件拼到正确轮廓里，形成面积模型。",
+  "targetTitle": "面积模型",
+  "pieces": [
+    { "id": "rect_long", "label": "长条矩形", "shape": "rect", "color": "#38BDF8" },
+    { "id": "rect_small", "label": "小矩形", "shape": "rect", "color": "#FACC15" },
+    { "id": "marker", "label": "单位标记", "shape": "circle", "color": "#86EFAC" }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
-  "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
-  }
+  "slots": [
+    { "id": "slot_a", "label": "主体区域", "accepts": "rect_long", "x": 0.62, "y": 0.42, "width": 150, "height": 72 },
+    { "id": "slot_b", "label": "补充区域", "accepts": "rect_small", "x": 0.73, "y": 0.56, "width": 120, "height": 62 },
+    { "id": "slot_c", "label": "单位标记", "accepts": "marker", "x": 0.58, "y": 0.62, "width": 104, "height": 52 }
+  ],
+  "successCriteria": "每个零件都需要匹配形状、位置或含义。"
 }

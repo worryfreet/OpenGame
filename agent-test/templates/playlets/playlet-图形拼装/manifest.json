@@ -5,7 +5,7 @@
   "concreteGameplay": "图形拼装",
   "engineFamily": "grid",
   "status": "ready",
-  "renderer": "GenericPlayletScene",
+  "renderer": "图形拼装PlayletScene",
   "configSchema": "./schema.json",
   "sampleConfig": "./sample.json",
   "defaultAssets": [

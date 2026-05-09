@@ -1,20 +1,39 @@
 {
-  "prompt": "完成「条件组合推理」玩法任务，并说明关键理由。",
-  "items": [
+  "prompt": "选择能支持面积比较的必要条件，并推出结论。",
+  "rule": "只有单位一致且比较的是同一种量时，面积大小比较才成立。",
+  "conditions": [
     {
-      "id": "item_1",
-      "label": "示例项目 A",
-      "answer": true
+      "id": "same_unit",
+      "label": "两个面积使用同一单位",
+      "required": true
     },
     {
-      "id": "item_2",
-      "label": "示例项目 B",
-      "answer": false
+      "id": "same_quantity",
+      "label": "比较对象都是面积",
+      "required": true
+    },
+    {
+      "id": "bigger_number",
+      "label": "只看数字大小",
+      "required": false,
+      "explanation": "数字大小不能脱离单位和量的类型。"
     }
   ],
-  "successCriteria": "学生完成操作并产出可写入学习报告的证据。",
+  "conclusions": [
+    {
+      "id": "valid_compare",
+      "label": "可以比较两个面积大小",
+      "correct": true
+    },
+    {
+      "id": "number_only",
+      "label": "数字大的面积一定更大",
+      "correct": false
+    }
+  ],
+  "successCriteria": "学生能选出必要条件并推出正确结论。",
   "feedback": {
-    "success": "操作正确，继续进入下一段玩法。",
-    "partial": "已经接近目标，先查看提示再试一次。"
+    "success": "条件组合正确，继续进入下一段玩法。",
+    "partial": "检查是否混入了不必要条件。"
   }
 }
