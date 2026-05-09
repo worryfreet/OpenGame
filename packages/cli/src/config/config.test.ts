@@ -187,6 +187,21 @@ describe('parseArguments', () => {
     expect(argv.promptInteractive).toBeUndefined();
   });
 
+  it('should parse Course Studio flags without changing the normal prompt', async () => {
+    process.argv = [
+      'node',
+      'script.js',
+      '--course-studio',
+      '--course-goal',
+      '四年级数学太空面积课',
+      '普通提示',
+    ];
+    const argv = await parseArguments({} as Settings);
+    expect(argv.courseStudio).toBe(true);
+    expect(argv.courseGoal).toBe('四年级数学太空面积课');
+    expect(argv.prompt).toBe('普通提示');
+  });
+
   it('should allow --prompt-interactive without --prompt', async () => {
     process.argv = [
       'node',

@@ -45,6 +45,38 @@ describe('GenerateCourseGDDTool', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it('拒绝未通过质量门禁的已确认方案', async () => {
+    const tool = new GenerateCourseGDDTool(config, modelConfig);
+    const params = buildParams({
+      selectedPlan: {
+        ...buildSelectedPlan(),
+        id: 'weak',
+        title: '生态知识选择题',
+        learningLoop: ['讲解', '答题', '答对加分'],
+        scenePlan: ['题目场景'],
+        workflow: undefined,
+        score: {
+          learningFit: 45,
+          explanationDepthFit: 35,
+          fun: 30,
+          ageFit: 80,
+          implementationStability: 82,
+          cost: 90,
+          safety: 90,
+        },
+        recommendationReason: '用选择题检查记忆。',
+      },
+    });
+
+    const result = await tool.validateBuildAndExecute(
+      params,
+      new AbortController().signal,
+    );
+
+    expect(result.error?.message).toContain('未通过课程质量门禁');
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it('解析模型 JSON 并返回课程模板映射提醒', async () => {
     const params = buildParams();
     mockModelResponse({ courseGdd: buildCourseGdd(params) });
@@ -197,8 +229,43 @@ function buildSelectedPlan(): CoursePlanOption {
     title: '生态网格调查',
     courseArchetype: 'course_grid',
     gameplayType: '分类观察',
-    learningLoop: ['讲解', '示例', '互动练习', '反馈', '评价'],
-    scenePlan: ['导入', '网格分类', '迁移挑战'],
+    workflow: {
+      startNodeId: 'classify',
+      nodes: [
+        {
+          id: 'classify',
+          playletId: 'playlet-拖拽分箱',
+          goalIds: ['goal_1'],
+          config: {
+            prompt: '调查森林角色，把生产者和消费者拖入不同生态格。',
+            successCriteria: '分类正确后点亮生态能量流。',
+          },
+          styleBindingId: 'forest',
+        },
+        {
+          id: 'chain',
+          playletId: 'playlet-步骤排序',
+          goalIds: ['goal_2'],
+          config: {
+            prompt: '按能量流动顺序修复食物链路径。',
+            successCriteria: '路径连通并解释每个角色关系。',
+          },
+          styleBindingId: 'forest',
+        },
+      ],
+      edges: [
+        { from: 'classify', to: 'chain', when: 'success' },
+      ],
+      recoveryPolicy: 'remediate_then_return',
+    },
+    learningLoop: [
+      '情境导入',
+      '观察示例',
+      '核心操作挑战',
+      '状态变化反馈',
+      '迁移复盘评价',
+    ],
+    scenePlan: ['森林调查导入', '网格分类点亮生态状态', '迁移挑战与复盘'],
     assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
     assetComplexity: 'medium',
     score: {
@@ -210,7 +277,7 @@ function buildSelectedPlan(): CoursePlanOption {
       cost: 80,
       safety: 94,
     },
-    recommendationReason: '网格分类适合承载角色关系推理。',
+    recommendationReason: '网格分类会改变生态能量流状态，反馈会引导学生修复关系。',
     risks: ['需要控制网格数量，避免认知负担。'],
   };
 }

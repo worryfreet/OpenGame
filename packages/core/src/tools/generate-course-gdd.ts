@@ -32,6 +32,7 @@ import {
 } from '../course/validation.js';
 import { resolveProviderConfig } from '../services/providerConfig.js';
 import { safeJsonParse } from '../utils/safeJsonParse.js';
+import { scoreCourseQuality } from '../course/quality/courseQualityScorer.js';
 
 export interface GenerateCourseGDDParams {
   courseSpec: CourseSpec;
@@ -501,6 +502,18 @@ function validateConfirmedPlan(params: GenerateCourseGDDParams): void {
   if (!planValidation.valid) {
     throw new Error(
       `selectedPlan 校验失败：${formatIssues(planValidation.errors)}`,
+    );
+  }
+
+  const qualityReview = scoreCourseQuality({
+    courseSpec: params.courseSpec,
+    plan: params.selectedPlan,
+  });
+  if (!qualityReview.passed) {
+    throw new Error(
+      `selectedPlan 未通过课程质量门禁，不能生成 Course GDD：总分 ${qualityReview.score.total}，阻断问题：${qualityReview.score.blockingIssues.join(
+        '；',
+      ) || '质量总分未达门槛'}`,
     );
   }
 }

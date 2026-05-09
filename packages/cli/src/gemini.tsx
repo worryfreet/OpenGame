@@ -333,6 +333,22 @@ export async function main() {
   // to run Gemini CLI. It is now safe to perform expensive initialization that
   // may have side effects.
   {
+    if (argv.courseStudio) {
+      const { buildCourseStudioPrompt, collectCourseStudioGoal } =
+        await import('./ui/course/runCourseStudio.js');
+      const providedGoal = argv.courseGoal ?? argv.prompt ?? argv.query;
+      const goal =
+        process.stdin.isTTY && argv.inputFormat !== InputFormat.STREAM_JSON
+          ? await collectCourseStudioGoal(providedGoal ?? '')
+          : (providedGoal ?? '');
+      argv = {
+        ...argv,
+        prompt: buildCourseStudioPrompt({ goal }),
+        promptInteractive: undefined,
+        query: undefined,
+      };
+    }
+
     const extensionEnablementManager = new ExtensionEnablementManager(
       ExtensionStorage.getUserExtensionsDir(),
       argv.extensions,

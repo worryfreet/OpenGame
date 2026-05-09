@@ -21,7 +21,9 @@ describe('createCourseGame', () => {
 
     const prompt = buildCourseGamePrompt({ courseSpec: buildCourseSpec() });
 
-    expect(prompt).toContain('只调用 `generate_course_plan`');
+    expect(prompt).toContain('调用 `generate_course_plan` 后');
+    expect(prompt).toContain('score_course_quality');
+    expect(prompt).toContain('repair_course_generation');
     expect(prompt).toContain('不要调用 `generate_course_gdd`');
     expect(prompt).toContain('等待用户或外部 ToC 服务确认 `selectedPlanId`');
     expect(prompt).toContain('"subject": "数学"');
@@ -80,7 +82,11 @@ describe('createCourseGame', () => {
         includePartialMessages: true,
         coreTools: expect.arrayContaining([
           'GenerateNextCourseSpec',
+          'GenerateOneShotCoursePlan',
           'GenerateCoursePlan',
+          'ScoreCourseQuality',
+          'RepairCourseGeneration',
+          'RecordCourseExperience',
           'GenerateCourseGDD',
           'GenerateAssets',
           'CourseTTSManifest',
@@ -89,6 +95,56 @@ describe('createCourseGame', () => {
         ]),
       }),
     });
+  });
+
+  it('支持只传一句话目标的一句话课程生成入口', async () => {
+    const { buildCourseGameFromPromptPrompt, createCourseGameFromPrompt } =
+      await import('../../src/course/createCourseGame.js');
+
+    const prompt = buildCourseGameFromPromptPrompt({
+      text: '四年级数学，太空基地主题，让孩子理解长方形面积公式不是死背。',
+      profileId: 'profile_1',
+    });
+
+    expect(prompt).toContain('generate_one_shot_course_plan 参数 JSON');
+    expect(prompt).toContain('generate_course_plan');
+    expect(prompt).toContain('score_course_quality');
+    expect(prompt).toContain('等待用户或外部 ToC 服务确认 `selectedPlanId`');
+
+    const result = createCourseGameFromPrompt({
+      text: '四年级数学，太空基地主题，让孩子理解长方形面积公式不是死背。',
+      options: { cwd: '/tmp/opengame-one-shot' },
+    });
+
+    expect(result).toEqual({ mocked: true });
+    expect(queryMock).toHaveBeenLastCalledWith({
+      prompt: expect.stringContaining('generate_one_shot_course_plan'),
+      options: expect.objectContaining({
+        cwd: '/tmp/opengame-one-shot',
+        includePartialMessages: true,
+        coreTools: expect.arrayContaining([
+          'GenerateOneShotCoursePlan',
+          'GenerateCoursePlan',
+          'ScoreCourseQuality',
+          'RepairCourseGeneration',
+        ]),
+      }),
+    });
+  });
+
+  it('一句话入口拒绝空目标和确认生成模式', async () => {
+    const { buildCourseGameFromPromptPrompt } =
+      await import('../../src/course/createCourseGame.js');
+
+    expect(() => buildCourseGameFromPromptPrompt({ text: '   ' })).toThrow(
+      '一句话课程目标不能为空',
+    );
+    expect(() =>
+      buildCourseGameFromPromptPrompt({
+        text: '四年级数学面积课',
+        mode: 'confirmed_generation' as never,
+      }),
+    ).toThrow('一句话入口只支持 plan_only');
   });
 
   it('从 assistant tool_use 和 tool_result 生成课程进度事件', async () => {
@@ -128,6 +184,60 @@ describe('createCourseGame', () => {
         stage: 'course_plan_options',
         status: 'completed',
         toolName: 'generate_course_plan',
+      }),
+    ]);
+  });
+
+  it('跟踪 MVP 3.0 一句话、质量、修复和经验工具进度事件', async () => {
+    const { createCourseProgressTracker } =
+      await import('../../src/course/createCourseGame.js');
+    const track = createCourseProgressTracker();
+
+    expect(
+      track(
+        buildAssistantMessage([
+          {
+            type: 'tool_use',
+            id: 'tool-one-shot',
+            name: 'generate_one_shot_course_plan',
+            input: { text: '四年级数学面积课' },
+          },
+          {
+            type: 'tool_use',
+            id: 'tool-quality',
+            name: 'score_course_quality',
+            input: {},
+          },
+          {
+            type: 'tool_use',
+            id: 'tool-repair',
+            name: 'repair_course_generation',
+            input: {},
+          },
+          {
+            type: 'tool_use',
+            id: 'tool-exp',
+            name: 'record_course_experience',
+            input: {},
+          },
+        ]),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        stage: 'one_shot_course_plan',
+        toolName: 'generate_one_shot_course_plan',
+      }),
+      expect.objectContaining({
+        stage: 'course_quality_score',
+        toolName: 'score_course_quality',
+      }),
+      expect.objectContaining({
+        stage: 'course_generation_repair',
+        toolName: 'repair_course_generation',
+      }),
+      expect.objectContaining({
+        stage: 'course_experience_record',
+        toolName: 'record_course_experience',
       }),
     ]);
   });

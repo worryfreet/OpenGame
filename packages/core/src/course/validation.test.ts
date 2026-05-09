@@ -25,9 +25,9 @@ describe('validateCourseSpec', () => {
     expect(result.valid).toBe(true);
   });
 
-  it('拒绝不在小学范围内的年级', () => {
+  it('拒绝不在中小学范围内的年级', () => {
     const spec = buildCourseSpec();
-    spec.studentProfile.grade = 7 as CourseSpec['studentProfile']['grade'];
+    spec.studentProfile.grade = 13 as CourseSpec['studentProfile']['grade'];
 
     const result = validateCourseSpec(spec);
 

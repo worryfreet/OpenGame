@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export const SUPPORTED_GRADES = [1, 2, 3, 4, 5, 6] as const;
+export const SUPPORTED_GRADES = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+] as const;
 export type StudentGrade = (typeof SUPPORTED_GRADES)[number];
 
 export const READING_LEVELS = ['low', 'medium', 'high'] as const;
@@ -344,7 +346,7 @@ export const courseSpecSchema = {
       required: ['grade', 'interests'],
       properties: {
         grade: { enum: SUPPORTED_GRADES },
-        age: { type: 'integer', minimum: 5, maximum: 13 },
+        age: { type: 'integer', minimum: 5, maximum: 18 },
         readingLevel: { enum: READING_LEVELS },
         interests: {
           type: 'array',

@@ -286,7 +286,7 @@ function buildMissingField(
 
 function buildFollowUpQuestion(field: IntakeMissingField): IntakeQuestion {
   const promptByField: Record<IntakeFieldName, string> = {
-    grade: '这节课面向小学几年级学生？',
+    grade: '这节课面向几年级学生？',
     subject: '这节课属于哪个学科？',
     topic: '这节课想学习哪个具体主题？',
     learningGoals: '完成课程后，希望学生能掌握什么？',
@@ -400,9 +400,11 @@ function parseNaturalLanguageInput(
 }
 
 function parseGrade(input: string): StudentGrade | undefined {
-  const match = input.match(/([一二三四五六1-6])\s*年级/);
+  const match = input.match(
+    /(一|二|三|四|五|六|七|八|九|十|十一|十二|1[0-2]|[1-9]|初一|初二|初三|高一|高二|高三)\s*年级|初一|初二|初三|高一|高二|高三/,
+  );
   if (!match) return undefined;
-  return toGrade(match[1]);
+  return toGrade(match[1] ?? match[0]);
 }
 
 function toGrade(value: string): StudentGrade | undefined {
@@ -419,6 +421,24 @@ function toGrade(value: string): StudentGrade | undefined {
     '5': 5,
     六: 6,
     '6': 6,
+    七: 7,
+    '7': 7,
+    初一: 7,
+    八: 8,
+    '8': 8,
+    初二: 8,
+    九: 9,
+    '9': 9,
+    初三: 9,
+    十: 10,
+    '10': 10,
+    高一: 10,
+    十一: 11,
+    '11': 11,
+    高二: 11,
+    十二: 12,
+    '12': 12,
+    高三: 12,
   };
   return map[value];
 }
@@ -440,7 +460,18 @@ function parseSubject(input: string): string | undefined {
 function inferSubject(topic: string | undefined): string | undefined {
   if (!topic) return undefined;
   if (
-    containsAny(topic, ['面积', '周长', '分数', '小数', '乘法', '除法', '单位'])
+    containsAny(topic, [
+      '面积',
+      '周长',
+      '分数',
+      '小数',
+      '乘法',
+      '除法',
+      '单位',
+      '函数',
+      '方程',
+      '代数',
+    ])
   ) {
     return '数学';
   }
@@ -466,6 +497,12 @@ function parseTopic(
     '周长',
     '分数',
     '小数',
+    '一元二次函数',
+    '二次函数',
+    '一次函数',
+    '函数',
+    '一元二次方程',
+    '方程',
     '乘法',
     '除法',
     '单位换算',
@@ -501,6 +538,15 @@ function buildLearningGoals(
   }
   if (topic.includes('单位')) {
     return ['理解不同单位的含义', '能完成常见单位换算'];
+  }
+  if (topic.includes('二次函数')) {
+    return ['理解二次函数图像特征', '能判断开口方向、顶点和对称轴'];
+  }
+  if (topic.includes('函数')) {
+    return ['理解函数关系', '能结合图像和表达式解决问题'];
+  }
+  if (topic.includes('方程')) {
+    return ['理解方程的解和等式关系', '能用方程解决问题'];
   }
   if (subject === '英语') {
     return [`理解${topic}的核心表达`, `能在情境中使用${topic}`];
@@ -670,7 +716,7 @@ function inferRepresentation(
 
 function inferReadingLevel(grade: StudentGrade | undefined): ReadingLevel {
   if (!grade || grade <= 2) return 'low';
-  if (grade <= 4) return 'medium';
+  if (grade <= 6) return 'medium';
   return 'high';
 }
 

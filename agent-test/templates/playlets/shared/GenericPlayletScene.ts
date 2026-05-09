@@ -1,8 +1,8 @@
 import { BasePlayletScene } from './BasePlayletScene';
 
 export class GenericPlayletScene extends BasePlayletScene {
-  constructor() {
-    super('GenericPlayletScene');
+  constructor(sceneKey = 'GenericPlayletScene') {
+    super(sceneKey);
   }
 
   create(): void {

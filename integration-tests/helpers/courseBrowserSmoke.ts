@@ -24,6 +24,7 @@ interface CourseContentForSmoke {
 interface CourseRuntimeStatus {
   stage?: string;
   scene?: string;
+  playletId?: string;
   detail?: string;
 }
 
@@ -445,7 +446,7 @@ async function driveWorkflowCourse(
   const nodeCount = courseContent.workflow?.nodes.length ?? 0;
   for (let i = 0; i < nodeCount; i++) {
     await waitForRuntimeStage(client, 'playlet');
-    await clickWorkflowCompleteButton(client);
+    await completeCurrentWorkflowPlaylet(client);
     await delay(250);
   }
 }
@@ -560,6 +561,7 @@ async function getRuntimeStatus(
       return {
         stage: node.getAttribute('data-stage') ?? undefined,
         scene: node.getAttribute('data-scene') ?? undefined,
+        playletId: node.getAttribute('data-playlet-id') ?? undefined,
         detail: node.textContent ?? undefined,
       };
     })()`,
@@ -568,6 +570,10 @@ async function getRuntimeStatus(
     ? {
         stage: typeof value['stage'] === 'string' ? value['stage'] : undefined,
         scene: typeof value['scene'] === 'string' ? value['scene'] : undefined,
+        playletId:
+          typeof value['playletId'] === 'string'
+            ? value['playletId']
+            : undefined,
         detail:
           typeof value['detail'] === 'string' ? value['detail'] : undefined,
       }
@@ -698,6 +704,18 @@ async function clickGameCoordinate(
   await click(client, x, y);
 }
 
+async function completeCurrentWorkflowPlaylet(client: CdpClient): Promise<void> {
+  const status = await getRuntimeStatus(client);
+  if (
+    status.playletId === 'playlet-单选判断' ||
+    status.scene === '单选判断PlayletScene'
+  ) {
+    await clickSingleChoiceJudgementPlaylet(client);
+    return;
+  }
+  await dispatchSmokeCompletePlayletEvent(client);
+}
+
 async function clickWorkflowCompleteButton(client: CdpClient): Promise<void> {
   const value = await evaluateValue(
     client,
@@ -714,6 +732,28 @@ async function clickWorkflowCompleteButton(client: CdpClient): Promise<void> {
     throw new Error('无法定位 Phaser canvas，不能点击玩法完成按钮。');
   }
   await clickGameCoordinate(client, Number(value['x']), Number(value['y']));
+}
+
+async function dispatchSmokeCompletePlayletEvent(
+  client: CdpClient,
+): Promise<void> {
+  await evaluateValue(
+    client,
+    `(() => {
+      document.dispatchEvent(
+        new Event('opengame:browser-smoke-complete-playlet')
+      );
+      return true;
+    })()`,
+  );
+}
+
+async function clickSingleChoiceJudgementPlaylet(
+  client: CdpClient,
+): Promise<void> {
+  await clickGameCoordinate(client, 692, 142);
+  await delay(120);
+  await clickGameCoordinate(client, 812, 234);
 }
 
 async function dispatchDomStartEvent(client: CdpClient): Promise<void> {

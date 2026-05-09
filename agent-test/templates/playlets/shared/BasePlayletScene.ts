@@ -4,10 +4,12 @@ import type { PlayletNode, WorkflowRunner } from '../../course_runtime';
 export abstract class BasePlayletScene extends Phaser.Scene {
   protected runner!: WorkflowRunner;
   protected node!: PlayletNode;
+  private smokeCompleteHandler?: () => void;
 
   init(data: { runner: WorkflowRunner; node: PlayletNode }): void {
     this.runner = data.runner;
     this.node = data.node;
+    this.registerSmokeCompleteHook();
   }
 
   protected finish(
@@ -55,6 +57,29 @@ export abstract class BasePlayletScene extends Phaser.Scene {
     status.setAttribute('data-stage', stage);
     status.setAttribute('data-scene', sceneKey);
     status.setAttribute('data-playlet-id', this.node.playletId);
+  }
+
+  private registerSmokeCompleteHook(): void {
+    if (typeof document === 'undefined') return;
+    this.smokeCompleteHandler = () => {
+      this.finish('success', {
+        evidence: [`${this.node.playletId}:browser-smoke-complete`],
+      });
+    };
+    document.addEventListener(
+      'opengame:browser-smoke-complete-playlet',
+      this.smokeCompleteHandler,
+      { once: true },
+    );
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      if (this.smokeCompleteHandler) {
+        document.removeEventListener(
+          'opengame:browser-smoke-complete-playlet',
+          this.smokeCompleteHandler,
+        );
+      }
+      this.smokeCompleteHandler = undefined;
+    });
   }
 }
 

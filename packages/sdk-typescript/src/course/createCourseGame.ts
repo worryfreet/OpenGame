@@ -142,10 +142,29 @@ export interface LearningState {
 
 export interface CreateCourseGameOptions {
   courseSpec: CourseSpec;
+  oneShotText?: string;
   mode?: CreateCourseGameMode;
   selectedPlan?: CoursePlanOption;
   selectedPlanId?: string;
   outputDir?: string;
+  options?: QueryOptions;
+}
+
+export interface CreateCourseGameFromPromptOptions {
+  text: string;
+  profileId?: string;
+  preferenceProfile?: StudentPreferenceProfile;
+  learningState?: LearningState;
+  guardianPolicy?: {
+    profileId: string;
+    maxSessionMinutes: number;
+    allowUploadedImages: boolean;
+    allowGeneratedVideo: boolean;
+    contentStrictness: 'normal' | 'strict';
+    maxEstimatedCostCents?: number;
+    maxRetryCount: number;
+  };
+  mode?: Extract<CreateCourseGameMode, 'plan_only'>;
   options?: QueryOptions;
 }
 
@@ -166,8 +185,12 @@ export interface CreateNextCourseGameOptions {
 }
 
 export type CourseGenerationStage =
+  | 'one_shot_course_plan'
   | 'next_course_spec'
   | 'course_plan_options'
+  | 'course_quality_score'
+  | 'course_generation_repair'
+  | 'course_experience_record'
   | 'course_gdd'
   | 'course_scaffold'
   | 'game_assets'
@@ -184,8 +207,12 @@ export interface CourseProgressEvent {
 }
 
 const COURSE_CORE_TOOLS = [
+  'GenerateOneShotCoursePlan',
   'GenerateNextCourseSpec',
   'GenerateCoursePlan',
+  'ScoreCourseQuality',
+  'RepairCourseGeneration',
+  'RecordCourseExperience',
   'GenerateCourseGDD',
   'GenerateAssets',
   'CourseTTSManifest',
@@ -198,8 +225,12 @@ const COURSE_CORE_TOOLS = [
 ] as const;
 
 const TOOL_STAGE_MAP: Record<string, CourseGenerationStage> = {
+  generate_one_shot_course_plan: 'one_shot_course_plan',
   generate_next_course_spec: 'next_course_spec',
   generate_course_plan: 'course_plan_options',
+  score_course_quality: 'course_quality_score',
+  repair_course_generation: 'course_generation_repair',
+  record_course_experience: 'course_experience_record',
   generate_course_gdd: 'course_gdd',
   generate_game_assets: 'game_assets',
   course_tts_manifest: 'course_tts_manifest',
@@ -210,6 +241,17 @@ export function createCourseGame(params: CreateCourseGameOptions): Query {
   validateCreateCourseGameOptions(params);
 
   const prompt = buildCourseGamePrompt(params);
+  const options = mergeCourseQueryOptions(params.options);
+
+  return query({ prompt, options });
+}
+
+export function createCourseGameFromPrompt(
+  params: CreateCourseGameFromPromptOptions,
+): Query {
+  validateCreateCourseGameFromPromptOptions(params);
+
+  const prompt = buildCourseGameFromPromptPrompt(params);
   const options = mergeCourseQueryOptions(params.options);
 
   return query({ prompt, options });
@@ -240,11 +282,16 @@ export function buildCourseGamePrompt(params: CreateCourseGameOptions): string {
     return [
       '你正在通过 OpenGame SDK 运行课程游戏生成的第一阶段。',
       '',
-      '目标：只调用 `generate_course_plan`，基于下面的结构化 CourseSpec 生成 3 个受控课程游戏方案。',
+      '目标：基于下面的结构化 CourseSpec 生成 3 个受控课程游戏方案。',
       '硬性约束：',
+      '- 如果外部传入 oneShotText，先调用 `generate_one_shot_course_plan` 校验一句话输入是否能落到 CourseSpec；但最终仍以结构化 CourseSpec 进入方案生成。',
+      '- 调用 `generate_course_plan` 后，必须调用 `score_course_quality` 对推荐方案做生成前质量门禁。',
+      '- 如果质量门禁未通过，调用 `repair_course_generation` 产出修复动作，不要进入 `generate_course_gdd`。',
       '- 不要调用 `generate_course_gdd`，也不要复制模板或生成素材。',
       '- 输出方案后必须停下，等待用户或外部 ToC 服务确认 `selectedPlanId`。',
       '- 保留普通 OpenGame 游戏生成链路，不要调用普通 `generate_gdd` 替代课程工具。',
+      '- 方案和质量结果可调用 `record_course_experience` 记录结构化摘要，不保存学生原始输入。',
+      params.oneShotText ? `oneShotText：${params.oneShotText}` : '',
       '',
       'CourseSpec JSON：',
       '```json',
@@ -259,9 +306,11 @@ export function buildCourseGamePrompt(params: CreateCourseGameOptions): string {
     '目标：按顺序完成 Course GDD、课程模板 scaffold、普通素材、课程 TTS manifest、课程包验证。',
     '硬性约束：',
     '- 先调用 `generate_course_gdd`，参数必须包含 `userConfirmed: true`、`selectedPlanId` 和下方 `selectedPlan`。',
+    '- 生成 Course GDD 后调用 `score_course_quality` 做生成后质量复核；不通过时调用 `repair_course_generation`，不要进入高成本素材生成。',
     '- 必须使用 `generate_course_gdd` 返回的 `<course-scaffold>` 写入课程模板和 `src/courseContent.json`。',
     '- 普通图片、BGM、SFX 调用 `generate_game_assets`；讲解旁白必须调用 `course_tts_manifest` 生成 manifest，失败时使用该工具写入字幕降级。',
     '- 发布或浏览器验证之前必须调用 `validate_course_package`；如果存在 error，停止并报告阻断项。',
+    '- 生成完成或失败后调用 `record_course_experience` 记录成功/失败结构化经验摘要。',
     '- 不要调用普通 `generate_gdd` 替代 Course GDD。',
     '',
     `输出目录：${outputDir}`,
@@ -276,6 +325,40 @@ export function buildCourseGamePrompt(params: CreateCourseGameOptions): string {
     'selectedPlan JSON：',
     '```json',
     selectedPlanJson ?? '{}',
+    '```',
+  ].join('\n');
+}
+
+export function buildCourseGameFromPromptPrompt(
+  params: CreateCourseGameFromPromptOptions,
+): string {
+  validateCreateCourseGameFromPromptOptions(params);
+
+  const oneShotInput = {
+    text: params.text,
+    profileId: params.profileId,
+    preferenceProfile: params.preferenceProfile,
+    learningState: params.learningState,
+    guardianPolicy: params.guardianPolicy,
+  };
+
+  return [
+    '你正在通过 OpenGame SDK 运行 MVP 3.0 一句话课程生成入口。',
+    '',
+    '目标：用户只提供一句话课程学习目标，你必须先把它解析成受控 CourseSpec，再生成 3 个高质量课程游戏方案。',
+    '硬性约束：',
+    '- 首先调用 `generate_one_shot_course_plan`，参数使用下方 JSON。',
+    '- 如果返回 nextTool=clarify_with_user 或 blocked，停止并把追问或阻断原因返回给外部 ToC 服务，不要自行猜测继续生成。',
+    '- 如果返回 CourseSpec，必须把该 CourseSpec 原样传给 `generate_course_plan`。',
+    '- 调用 `generate_course_plan` 后，必须调用 `score_course_quality` 对推荐方案做生成前质量门禁。',
+    '- 如果质量门禁未通过，调用 `repair_course_generation` 产出重写链路，并在修复后重新评分；未通过前不要进入 `generate_course_gdd`。',
+    '- 不要调用 `generate_course_gdd`，也不要复制模板或生成素材。',
+    '- 输出 3 个方案和质量结果后停下，等待用户或外部 ToC 服务确认 `selectedPlanId`。',
+    '- 方案和质量结果可调用 `record_course_experience` 记录结构化摘要，不保存学生原始输入。',
+    '',
+    'generate_one_shot_course_plan 参数 JSON：',
+    '```json',
+    stableJson(oneShotInput),
     '```',
   ].join('\n');
 }
@@ -427,6 +510,17 @@ function validateCreateCourseGameOptions(
   }
 }
 
+function validateCreateCourseGameFromPromptOptions(
+  params: CreateCourseGameFromPromptOptions,
+): void {
+  if (!params.text?.trim()) {
+    throw new Error('一句话课程目标不能为空。');
+  }
+  if (params.mode && params.mode !== 'plan_only') {
+    throw new Error('一句话入口只支持 plan_only；确认方案后再调用 createCourseGame。');
+  }
+}
+
 function validateCreateNextCourseGameOptions(
   params: CreateNextCourseGameOptions,
 ): void {
@@ -498,8 +592,12 @@ function buildProgressMessage(
   status: CourseProgressEvent['status'],
 ): string {
   const label = {
+    one_shot_course_plan: '一句话课程解析',
     next_course_spec: '下一课 CourseSpec 生成',
     course_plan_options: '课程方案生成',
+    course_quality_score: '课程质量评分',
+    course_generation_repair: '课程自动修复',
+    course_experience_record: '课程经验记录',
     course_gdd: 'Course GDD 生成',
     course_scaffold: '课程模板 scaffold',
     game_assets: '普通素材生成',

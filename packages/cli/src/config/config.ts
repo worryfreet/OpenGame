@@ -146,6 +146,8 @@ export interface CliArgs {
   excludeTools: string[] | undefined;
   authType: string | undefined;
   channel: string | undefined;
+  courseStudio?: boolean | undefined;
+  courseGoal?: string | undefined;
 }
 
 function normalizeOutputFormat(
@@ -324,6 +326,15 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
           type: 'string',
           choices: ['VSCode', 'ACP', 'SDK', 'CI'],
           description: 'Channel identifier (VSCode, ACP, SDK, CI)',
+        })
+        .option('course-studio', {
+          type: 'boolean',
+          description: '根据学生学习需求生成游戏化课程。',
+          default: false,
+        })
+        .option('course-goal', {
+          type: 'string',
+          description: '学生的目标学习需求。',
         })
         .option('allowed-mcp-server-names', {
           type: 'array',

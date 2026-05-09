@@ -1,8 +1,10 @@
 export { query } from './query/createQuery.js';
 export {
   buildCourseGamePrompt,
+  buildCourseGameFromPromptPrompt,
   buildNextCourseGamePrompt,
   createCourseGame,
+  createCourseGameFromPrompt,
   createNextCourseGame,
   createCourseProgressTracker,
   mergeCourseQueryOptions,
@@ -35,6 +37,7 @@ export type {
   CourseSpec,
   CreateCourseGameMode,
   CreateCourseGameOptions,
+  CreateCourseGameFromPromptOptions,
   LearningReportSummary,
   LearningState,
   NextCourseMode,

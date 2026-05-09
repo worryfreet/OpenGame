@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenGame 游戏化课程生成全流程</title>
+    <link rel="stylesheet" href="course-generation-flow.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <div>
+            <div class="eyebrow">
+              <span class="signal"></span>OpenGame Course Pipeline
+            </div>
+            <h1>从一句话，到可运行的游戏化课程</h1>
+            <p>
+              这张图把课程生成拆成固定链路、AI
+              改造、人工确认和质量验证四条线。先看全局，再点开每个阶段，就能知道输入怎么变成
+              CourseSpec、方案、Course GDD、模板工程、素材、旁白、验证报告和最终
+              H5 课程包。
+            </p>
+            <div class="legend">
+              <span class="tag fixed">固定不变</span>
+              <span class="tag ai">AI 改造</span>
+              <span class="tag human">人工确认</span>
+              <span class="tag check">质量验证</span>
+            </div>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric">
+              <strong>3</strong
+              ><span>课程方案：stable、balanced、creative</span>
+            </div>
+            <div class="metric">
+              <strong>9</strong><span>主阶段：输入到课程输出</span>
+            </div>
+            <div class="metric">
+              <strong>40</strong><span>ready playlet 可进入工作流</span>
+            </div>
+            <div class="metric">
+              <strong>0</strong><span>确认前禁止生成高成本素材</span>
+            </div>
+          </div>
+        </div>
+        <div class="system-board" aria-label="生成链路总览">
+          <div class="board-head">
+            <span>受控生成流水线</span>
+            <span>plan_only -> confirmed_generation</span>
+          </div>
+          <div class="board-flow">
+            <div class="board-node">
+              <b>输入收敛</b
+              ><small
+                >一句话、产品化输入或结构化 CourseSpec 统一进入受控
+                schema。</small
+              >
+            </div>
+            <div class="board-node">
+              <b>方案生成</b
+              ><small
+                >AI 生成 3 个课程方案，但必须经过质量门禁和 selectedPlanId
+                确认。</small
+              >
+            </div>
+            <div class="board-node">
+              <b>GDD 落地</b
+              ><small
+                >确认后生成 Course GDD，再映射到课程模板、workflow 和
+                courseContent。</small
+              >
+            </div>
+            <div class="board-node">
+              <b>模板装配</b
+              ><small
+                >复制 core、course_runtime、course_* 和已登记
+                playlet，不新增玩法引擎。</small
+              >
+            </div>
+            <div class="board-node">
+              <b>多模态资源</b
+              ><small
+                >图片/BGM/SFX 走普通素材；讲解旁白走课程 TTS manifest。</small
+              >
+            </div>
+            <div class="board-node">
+              <b>发布验证</b
+              ><small
+                >validate_course_package 阻断错误，随后进入 build/test/browser
+                smoke。</small
+              >
+            </div>
+          </div>
+          <div class="board-head">
+            <span
+              >核心边界：AI
+              负责内容与配置，固定系统负责结构、模板、验证和发布门。</span
+            >
+          </div>
+        </div>
+      </header>
+      <section class="section-title">
+        <div>
+          <h2>一眼看懂的总流程</h2>
+          <p>
+            点击任意阶段查看文件、工具、输入输出和操作。用筛选器只看固定链路、AI
+            改造或验证节点。
+          </p>
+        </div>
+        <div class="controls" role="toolbar" aria-label="流程筛选">
+          <button class="control active" data-filter="all">全链路</button>
+          <button class="control" data-filter="fixed">固定链路</button>
+          <button class="control" data-filter="ai">AI 改造</button>
+          <button class="control" data-filter="human">确认节点</button>
+          <button class="control" data-filter="check">验证节点</button>
+        </div>
+      </section>
+      <div class="mini-map" id="miniMap"></div>
+      <main class="pipeline">
+        <nav class="rail" id="stageRail" aria-label="阶段导航"></nav>
+        <section class="map-panel">
+          <div class="flow-grid" id="stageCards"></div>
+        </section>
+        <aside class="detail-panel" id="detailPanel" aria-live="polite"></aside>
+      </main>
+      <section class="summary-panel">
+        <div class="section-title" style="margin-top: 0">
+          <div>
+            <h2>固定与 AI 的分工</h2>
+            <p>
+              这条链路不是让 AI 随便写一个游戏，而是让 AI
+              在固定边界内生成更好的课程内容、玩法组合和多模态计划。
+            </p>
+          </div>
+        </div>
+        <div class="split">
+          <div class="lane">
+            <h3><span class="tag fixed">固定不变</span></h3>
+            <ul>
+              <li>
+                <code>CourseSpec</code>、<code>CoursePlanOption</code>、<code
+                  >CourseGDD</code
+                >
+                是主数据合同。
+              </li>
+              <li>
+                <code>plan_only</code> 必须停在方案确认，不能提前生成
+                GDD、模板或素材。
+              </li>
+              <li>
+                模板只允许
+                <code>course_ui</code>、<code>course_grid</code>、<code
+                  >course_td</code
+                >
+                和 ready playlet。
+              </li>
+              <li>
+                <code>validate_course_package</code> 有 error
+                时阻断发布，不能靠后续人工兜底。
+              </li>
+            </ul>
+          </div>
+          <div class="lane">
+            <h3><span class="tag ai">AI 改造</span></h3>
+            <ul>
+              <li>一句话解析、低影响字段补全、关键追问和安全阻断。</li>
+              <li>
+                生成 stable、balanced、creative 三种课程游戏方案，并写入
+                workflow DAG。
+              </li>
+              <li>基于质量评分自动修复低分方案，避免换皮问答。</li>
+              <li>
+                把已确认方案扩展为讲解、互动、反馈、评价、素材和旁白的 Course
+                GDD。
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="handoff">
+          <h3>最终产物</h3>
+          <div class="handoff-grid">
+            <div class="handoff-item">
+              <b>可运行 H5 课程包</b
+              ><span
+                >包含
+                <code>src/courseContent.json</code>、模板源码、playlet、素材
+                manifest 和旁白 manifest。</span
+              >
+            </div>
+            <div class="handoff-item">
+              <b>学习报告与下一课入口</b
+              ><span
+                >运行时记录掌握证据、错因、提示使用和完成率，支持
+                <code>createNextCourseGame()</code>。</span
+              >
+            </div>
+            <div class="handoff-item">
+              <b>质量与恢复记录</b
+              ><span
+                >质量评分、验证报告、修复动作和成功/失败经验可沉淀到经验库。</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="course-generation-flow.js"></script>
+  </body>
+</html>

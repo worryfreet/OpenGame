@@ -26,7 +26,11 @@ import { ShellTool } from '../tools/shell.js';
 import { ReadFileTool } from '../tools/read-file.js';
 import { GrepTool } from '../tools/grep.js';
 import { CompleteCourseIntakeTool } from '../tools/complete-course-intake.js';
+import { GenerateOneShotCoursePlanTool } from '../tools/generate-one-shot-course-plan.js';
 import { GenerateCoursePlanTool } from '../tools/generate-course-plan.js';
+import { ScoreCourseQualityTool } from '../tools/score-course-quality.js';
+import { RepairCourseGenerationTool } from '../tools/repair-course-generation.js';
+import { RecordCourseExperienceTool } from '../tools/record-course-experience.js';
 import { GenerateStylePreviewTool } from '../tools/generate-style-preview.js';
 import { ReviseCoursePlanTool } from '../tools/revise-course-plan.js';
 import { GenerateNextCourseSpecTool } from '../tools/generate-next-course-spec.js';
@@ -113,6 +117,18 @@ vi.mock('../tools/web-fetch', () => ({
 }));
 vi.mock('../tools/generate-course-plan.js', () => ({
   GenerateCoursePlanTool: createToolMock('generate_course_plan'),
+}));
+vi.mock('../tools/generate-one-shot-course-plan.js', () => ({
+  GenerateOneShotCoursePlanTool: createToolMock('generate_one_shot_course_plan'),
+}));
+vi.mock('../tools/score-course-quality.js', () => ({
+  ScoreCourseQualityTool: createToolMock('score_course_quality'),
+}));
+vi.mock('../tools/repair-course-generation.js', () => ({
+  RepairCourseGenerationTool: createToolMock('repair_course_generation'),
+}));
+vi.mock('../tools/record-course-experience.js', () => ({
+  RecordCourseExperienceTool: createToolMock('record_course_experience'),
 }));
 vi.mock('../tools/generate-style-preview.js', () => ({
   GenerateStylePreviewTool: createToolMock('generate_style_preview'),
@@ -739,6 +755,63 @@ describe('Server Config (config.ts)', () => {
         (call) => call[0] instanceof vi.mocked(CompleteCourseIntakeTool),
       );
       expect(wasCourseIntakeToolRegistered).toBe(true);
+    });
+
+    it('should register the one-shot course plan tool when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: ['GenerateOneShotCoursePlan'],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool;
+
+      const wasOneShotToolRegistered = (
+        registerToolMock as Mock
+      ).mock.calls.some(
+        (call) => call[0] instanceof vi.mocked(GenerateOneShotCoursePlanTool),
+      );
+      expect(wasOneShotToolRegistered).toBe(true);
+    });
+
+    it('should register MVP 3.0 quality, repair, and experience tools when enabled explicitly', async () => {
+      const params: ConfigParameters = {
+        ...baseParams,
+        coreTools: [
+          'ScoreCourseQuality',
+          'RepairCourseGeneration',
+          'RecordCourseExperience',
+        ],
+      };
+      const config = new Config(params);
+      await config.initialize();
+
+      const registerToolMock = (
+        (await vi.importMock('../tools/tool-registry')) as {
+          ToolRegistry: { prototype: { registerTool: Mock } };
+        }
+      ).ToolRegistry.prototype.registerTool as Mock;
+
+      expect(
+        registerToolMock.mock.calls.some(
+          (call) => call[0] instanceof vi.mocked(ScoreCourseQualityTool),
+        ),
+      ).toBe(true);
+      expect(
+        registerToolMock.mock.calls.some(
+          (call) => call[0] instanceof vi.mocked(RepairCourseGenerationTool),
+        ),
+      ).toBe(true);
+      expect(
+        registerToolMock.mock.calls.some(
+          (call) => call[0] instanceof vi.mocked(RecordCourseExperienceTool),
+        ),
+      ).toBe(true);
     });
 
     it('should register the style preview tool when enabled explicitly', async () => {

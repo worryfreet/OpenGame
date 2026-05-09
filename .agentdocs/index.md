@@ -7,6 +7,13 @@
 
 ## 已完成任务文档
 
+`workflow/done/260509-course-product-technical-optimization.md` - 游戏化课程产品与技术优化方案，多角色诊断并重点规划精彩度和 AI 开发权限。
+`workflow/done/260509-course-studio-agent-entry.md` - Course Studio 回归 OpenGame 原始 Agent 生成入口的重构任务。
+`workflow/done/260509-course-flow-html.md` - 游戏化课程从用户输入到课程输出的渐进式 HTML 流程图任务。
+`workflow/done/260509-course-studio-mac-app.md` - 历史任务：曾尝试将 Course Studio 做成本地可视化客户端；该方向已被当前 `workflow/260509-course-studio-agent-entry.md` 覆盖，后续以 OpenGame 原始 Agent 生成入口为准。
+`workflow/done/260509-mvp3-course-studio-client.md` - 历史任务：曾尝试 Course Studio 客户端/TUI 入口；当前不作为产品方向依据，仅保留实现历史。
+`workflow/done/260509-mvp3-quality-baseline.md` - MVP 3.0 精彩度标准与 golden cases 阶段 0 实施记录。
+`workflow/done/260509-mvp3-one-shot-quality.md` - MVP 3.0 一句话高质量课程生成、质量门禁、自动修复、经验库和 SDK 一句话入口实施记录。
 `workflow/done/260508-create-diff-pet.md` - 创建名为 Diff 的 Codex 自定义宠物，记录生成、姿态、验证和打包结果。
 `workflow/done/260508-ai-literacy-lesson1-sample.md` - 基于课程总剧情大纲 Lesson 1 生成 AI 素养游戏化课程样例。
 `workflow/done/260508-mvp2-product-boundary.md` - MVP 2.0 产品输入、偏好记忆、学习状态和家长策略边界的阶段 0 实施记录。
@@ -26,6 +33,7 @@
 
 ## 产品文档
 
+`prd/course-product-technical-optimization.md` - 游戏化课程产品与技术优化方案，聚焦精彩度、学生/家长体验、AI 开发权限分层和技术重构路线。
 `prd/toc-course-mvp-1.md` - MVP 1.0 受控生成闭环落地方案。
 `prd/toc-course-mvp-2.md` - MVP 2.0 产品化体验与持续使用能力路线。
 `prd/toc-course-mvp-3.md` - MVP 3.0 一句话高质量生成与核心生成能力跃迁路线。
@@ -50,10 +58,18 @@
 `../agent-test/docs/product/mvp2-learning-memory.md` - MVP 2.0 偏好记忆、学习状态、隐私清洗和数据删除规则，开发持续使用、学习报告或续作功能时必读。
 `../agent-test/docs/product/mvp2-guardian-policy.md` - MVP 2.0 家长控制、生成失败恢复、重试预算和发布前策略校验规则，开发素材生成、TTS、验证或恢复功能时必读。
 
+## 课程质量文档
+
+`../agent-test/docs/quality/excitement-rubric.md` - MVP 3.0 精彩度评分标准，开发一句话生成、课程质量门禁或自动修复时必读。
+`../agent-test/docs/quality/one-shot-generation.md` - MVP 3.0 一句话生成导演规则，开发 CoursePlanOption 生成、导演检查或换皮问答拦截时必读。
+`../agent-test/docs/quality/quality-gates.md` - MVP 3.0 课程质量门禁，开发质量评分、自动修复或生成工具集成时必读。
+`../agent-test/docs/quality/auto-repair-loop.md` - MVP 3.0 自动修复循环协议，开发质量、素材、TTS、构建或浏览器失败恢复时必读。
+`../agent-test/course-golden-cases/README.md` - MVP 3.0 golden cases 文件型回归目录说明；canonical 数据当前在 core quality 模块。
+
 ## 全局重要记忆
 
 - 与用户沟通、代理文档和代码注释统一使用中文；必要英文术语首次出现时补充中文说明。
-- Shell 命令必须使用 `rtk` 前缀。
+- Shell 命令不再强制使用 `rtk` 前缀。
 - 当前项目原始定位是从自然语言生成可玩的 Web 游戏；二创方向应保留 OpenGame 作为互动游戏生成底座，在其上新增课程规划、风格规划、未成年人保护和课程验证层。
 - 课程玩法选型必须先看学习目标、学习阶段和学生核心动作，再参考学科；学科只提供素材语境，不能直接决定玩法。后续课程方案生成要优先使用 `prd/gameplay-taxonomy/` 的玩法超类，而不是只按学科映射到模板。
 - 课程模板族统一使用 `src/courseContent.json` 作为课程正文、互动、评价、旁白和报告指标入口；后续 Course GDD 映射不应为 `course_ui/course_grid/course_td` 各自发明不同配置协议。
@@ -68,6 +84,11 @@
 - Course GDD mapper 必须复制 `agent-test/templates/course_runtime`、`agent-test/templates/playlets/shared` 和 workflow 选中的 ready playlet 包；AI 生成阶段只能写配置、内容、风格和素材 manifest，不允许新增玩法引擎 TS 文件。
 - 玩法之间统一通过 `WorkflowRunner`、`CourseStateStore` 和 `TransitionManager` 过渡，playlet 只输出 `PlayletResult`，学习报告从统一状态读取证据。
 - 课程 SDK/headless 入口统一走 `packages/sdk-typescript/src/course/createCourseGame.ts`；默认 `plan_only` 只生成方案并等待 `selectedPlanId` 确认，确认后才进入 Course GDD、scaffold、素材、TTS 和课程包验证。
+- MVP 3.0 可视化一句话课程入口统一使用 `createCourseGameFromPrompt()`，只传自然语言目标和可选 profile/偏好/学习状态/家长策略；入口必须先调用 `generate_one_shot_course_plan` 生成受控 `CourseSpec`，追问或阻断时停止并返回给外部 ToC 服务。
+- `opengame --course-studio` 应回归 OpenGame 原始 Agent 执行链路：将用户课程目标转换为课程生成 prompt，继续走配置、认证、沙箱、工具调用和非交互生成流程；当前是 TTY 时，必须在进入 `runNonInteractive()` 前用本地课程解析器完成多轮需求收集，不能依赖模型追问后继续对话；不得启动网页客户端、独立 TUI 或静态预览壳。用户可见表达应隐藏 MVP、Agent、SDK、Workflow、CourseSpec、plan_only 等内部名词。
+- 课程生成范围已从小学扩展为中小学：`StudentGrade` 支持 1-12 年级，课程入口和一句话解析需要识别初一/初二/初三/高一/高二/高三以及函数、方程等数学主题。
+- `generate_course_gdd` 必须在工具边界内重新执行 `score_course_quality`；未通过质量门禁的已确认方案不能进入 Course GDD，即使调用方跳过了前置评分。
+- 学生可见课程文案必须隐藏直白教学目标：任务、场景、按钮、workflow config 和推荐语使用游戏任务/谜题/世界状态表达；明确 `learningGoals` 只保留在 CourseSpec、评测、家长报告和内部元数据。
 - 课程模板生产 build 使用 `agent-test/templates/core/tsconfig.json`，必须排除 `src/test` 且不依赖 Vitest 类型；三类 `course_*` 模板的 `gameConfig.json` 必须保留 core `main.ts` 依赖的 `screenSize`、`debugConfig.debug`、`renderConfig.pixelArt`。
 - MVP 2.0 产品层不改 MVP 1.0 的受控生成核心；自然语言输入、偏好记忆、学习状态和家长策略统一进入 `packages/core/src/course/product/`，再转换为受控 `CourseSpec`。
 - 产品层持久化只允许保存 `profileId` 关联的结构化偏好和学习摘要，不保存学生真实姓名、头像、语音样本、完整对话或精确画像。

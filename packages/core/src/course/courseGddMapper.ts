@@ -486,7 +486,7 @@ function buildMainSource(
   playletIds: string[] = [],
 ): string {
   const sceneImports = buildSceneImports(archetype, playletIds);
-  const sceneRegistrations = [
+  const sceneRegistrations = uniqueSceneRegistrations([
     ...sceneKeysForArchetype(archetype).map((sceneKey) => ({
       key: sceneKey,
       symbol: sceneKey,
@@ -495,7 +495,7 @@ function buildMainSource(
       key: buildPlayletSceneKey(playletId),
       symbol: buildPlayletSceneSymbol(index),
     })),
-  ]
+  ])
     .map(({ key, symbol }) => `game.scene.add('${key}', ${symbol});`)
     .join('\n');
 
@@ -548,6 +548,19 @@ game.scene.add('VictoryUIScene', VictoryUIScene);
 game.scene.add('GameCompleteUIScene', GameCompleteUIScene);
 game.scene.add('GameOverUIScene', GameOverUIScene);
 `;
+}
+
+function uniqueSceneRegistrations(
+  registrations: Array<{ key: string; symbol: string }>,
+): Array<{ key: string; symbol: string }> {
+  const seen = new Set<string>();
+  return registrations.filter((registration) => {
+    if (seen.has(registration.key)) {
+      return false;
+    }
+    seen.add(registration.key);
+    return true;
+  });
 }
 
 function buildSceneImports(

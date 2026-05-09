@@ -87,6 +87,16 @@ vi.mock('./config/sandboxConfig.js', () => ({
   loadSandboxConfig: vi.fn(),
 }));
 
+vi.mock('./ui/course/runCourseStudio.js', () => ({
+  buildCourseStudioPrompt: vi.fn(
+    ({ goal }: { goal?: string } = {}) => `课程生成 prompt：${goal ?? ''}`,
+  ),
+  collectCourseStudioGoal: vi
+    .fn()
+    .mockImplementation(async (goal = '') => goal || '三年级语文成语闯关课'),
+  promptForCourseStudioGoal: vi.fn().mockResolvedValue('三年级语文成语闯关课'),
+}));
+
 describe('gemini.tsx main function', () => {
   let originalEnvGeminiSandbox: string | undefined;
   let originalEnvSandbox: string | undefined;
@@ -128,6 +138,259 @@ describe('gemini.tsx main function', () => {
     vi.restoreAllMocks();
   });
 
+  it('injects Course Studio prompt and continues through the native non-interactive flow', async () => {
+    const processExitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation((code) => {
+        throw new MockProcessExitError(code);
+      });
+    const { loadCliConfig, parseArguments } =
+      await import('./config/config.js');
+    const { loadSettings } = await import('./config/settings.js');
+    const cleanupModule = await import('./utils/cleanup.js');
+    const coursePromptModule = await import('./ui/course/runCourseStudio.js');
+    const extensionModule = await import('./config/extension.js');
+    const validatorModule = await import('./validateNonInterActiveAuth.js');
+    const nonInteractiveModule = await import('./nonInteractiveCli.js');
+    const initializerModule = await import('./core/initializer.js');
+    const startupWarningsModule = await import('./utils/startupWarnings.js');
+    const userStartupWarningsModule =
+      await import('./utils/userStartupWarnings.js');
+
+    vi.mocked(coursePromptModule.collectCourseStudioGoal).mockImplementation(
+      async (goal = '') => goal,
+    );
+    vi.mocked(cleanupModule.cleanupCheckpoints).mockResolvedValue(undefined);
+    vi.mocked(cleanupModule.registerCleanup).mockImplementation(() => {});
+    vi.mocked(cleanupModule.runExitCleanup).mockResolvedValue(undefined);
+    vi.spyOn(extensionModule, 'loadExtensions').mockReturnValue([]);
+    vi.spyOn(
+      extensionModule.ExtensionStorage,
+      'getUserExtensionsDir',
+    ).mockReturnValue('/tmp/extensions');
+    vi.spyOn(initializerModule, 'initializeApp').mockResolvedValue({
+      authError: null,
+      themeError: null,
+      shouldOpenAuthDialog: false,
+      geminiMdFileCount: 0,
+    });
+    vi.spyOn(startupWarningsModule, 'getStartupWarnings').mockResolvedValue([]);
+    vi.spyOn(
+      userStartupWarningsModule,
+      'getUserStartupWarnings',
+    ).mockResolvedValue([]);
+
+    const validatedConfig = { validated: true } as unknown as Config;
+    const validateAuthSpy = vi
+      .spyOn(validatorModule, 'validateNonInteractiveAuth')
+      .mockResolvedValue(validatedConfig);
+    const runNonInteractiveSpy = vi
+      .spyOn(nonInteractiveModule, 'runNonInteractive')
+      .mockResolvedValue(undefined);
+
+    const loadedSettings = {
+      errors: [],
+      merged: {
+        advanced: {},
+        security: { auth: {} },
+        ui: {},
+      },
+      setValue: vi.fn(),
+      forScope: () => ({ settings: {}, originalSettings: {}, path: '' }),
+    } as unknown as LoadedSettings;
+    vi.mocked(loadSettings).mockReturnValue(loadedSettings);
+    vi.mocked(parseArguments).mockResolvedValue({
+      courseStudio: true,
+      courseGoal: '四年级数学太空面积课',
+      prompt: '普通提示',
+      extensions: [],
+    } as never);
+    const configStub = {
+      isInteractive: () => false,
+      getQuestion: () => '课程生成 prompt：四年级数学太空面积课',
+      getSandbox: () => false,
+      getDebugMode: () => false,
+      getListExtensions: () => false,
+      getMcpServers: () => ({}),
+      initialize: vi.fn().mockResolvedValue(undefined),
+      getIdeMode: () => false,
+      getExperimentalZedIntegration: () => false,
+      getScreenReader: () => false,
+      getGeminiMdFileCount: () => 0,
+      getProjectRoot: () => '/',
+      getInputFormat: () => undefined,
+      getContentGeneratorConfig: () => ({ authType: 'test-auth' }),
+      getSessionId: () => 'test-session',
+      getUsageStatisticsEnabled: () => false,
+      getTelemetryLogPromptsEnabled: () => false,
+    } as unknown as Config;
+    vi.mocked(loadCliConfig).mockResolvedValue(configStub);
+
+    process.env['SANDBOX'] = '1';
+    try {
+      await main();
+    } catch (error) {
+      if (!(error instanceof MockProcessExitError)) {
+        throw error;
+      }
+    } finally {
+      processExitSpy.mockRestore();
+    }
+
+    expect(coursePromptModule.buildCourseStudioPrompt).toHaveBeenCalledWith({
+      goal: '四年级数学太空面积课',
+    });
+    expect(coursePromptModule.collectCourseStudioGoal).not.toHaveBeenCalled();
+    expect(loadCliConfig).toHaveBeenCalledWith(
+      loadedSettings.merged,
+      [],
+      expect.anything(),
+      expect.objectContaining({
+        courseStudio: true,
+        prompt: '课程生成 prompt：四年级数学太空面积课',
+        promptInteractive: undefined,
+        query: undefined,
+      }),
+    );
+    expect(validateAuthSpy).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      configStub,
+      expect.any(Object),
+    );
+    expect(runNonInteractiveSpy).toHaveBeenCalledWith(
+      validatedConfig,
+      expect.any(Object),
+      '课程生成 prompt：四年级数学太空面积课',
+      expect.any(String),
+    );
+    expect(cleanupModule.runExitCleanup).toHaveBeenCalledTimes(1);
+    vi.mocked(parseArguments).mockResolvedValue({} as never);
+  });
+
+  it('asks for the Course Studio goal before native flow when no goal is provided', async () => {
+    const originalIsTTY = Object.getOwnPropertyDescriptor(
+      process.stdin,
+      'isTTY',
+    );
+    Object.defineProperty(process.stdin, 'isTTY', {
+      value: true,
+      configurable: true,
+    });
+
+    const processExitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation((code) => {
+        throw new MockProcessExitError(code);
+      });
+    const { loadCliConfig, parseArguments } =
+      await import('./config/config.js');
+    const { loadSettings } = await import('./config/settings.js');
+    const cleanupModule = await import('./utils/cleanup.js');
+    const coursePromptModule = await import('./ui/course/runCourseStudio.js');
+    const extensionModule = await import('./config/extension.js');
+    const validatorModule = await import('./validateNonInterActiveAuth.js');
+    const nonInteractiveModule = await import('./nonInteractiveCli.js');
+    const initializerModule = await import('./core/initializer.js');
+    const startupWarningsModule = await import('./utils/startupWarnings.js');
+    const userStartupWarningsModule =
+      await import('./utils/userStartupWarnings.js');
+
+    vi.mocked(coursePromptModule.collectCourseStudioGoal).mockResolvedValue(
+      '三年级语文成语闯关课',
+    );
+    vi.mocked(cleanupModule.cleanupCheckpoints).mockResolvedValue(undefined);
+    vi.mocked(cleanupModule.registerCleanup).mockImplementation(() => {});
+    vi.mocked(cleanupModule.runExitCleanup).mockResolvedValue(undefined);
+    vi.spyOn(extensionModule, 'loadExtensions').mockReturnValue([]);
+    vi.spyOn(
+      extensionModule.ExtensionStorage,
+      'getUserExtensionsDir',
+    ).mockReturnValue('/tmp/extensions');
+    vi.spyOn(initializerModule, 'initializeApp').mockResolvedValue({
+      authError: null,
+      themeError: null,
+      shouldOpenAuthDialog: false,
+      geminiMdFileCount: 0,
+    });
+    vi.spyOn(startupWarningsModule, 'getStartupWarnings').mockResolvedValue([]);
+    vi.spyOn(
+      userStartupWarningsModule,
+      'getUserStartupWarnings',
+    ).mockResolvedValue([]);
+
+    const validatedConfig = { validated: true } as unknown as Config;
+    vi.spyOn(validatorModule, 'validateNonInteractiveAuth').mockResolvedValue(
+      validatedConfig,
+    );
+    const runNonInteractiveSpy = vi
+      .spyOn(nonInteractiveModule, 'runNonInteractive')
+      .mockResolvedValue(undefined);
+
+    const loadedSettings = {
+      errors: [],
+      merged: {
+        advanced: {},
+        security: { auth: {} },
+        ui: {},
+      },
+      setValue: vi.fn(),
+      forScope: () => ({ settings: {}, originalSettings: {}, path: '' }),
+    } as unknown as LoadedSettings;
+    vi.mocked(loadSettings).mockReturnValue(loadedSettings);
+    vi.mocked(parseArguments).mockResolvedValue({
+      courseStudio: true,
+      extensions: [],
+    } as never);
+    vi.mocked(loadCliConfig).mockResolvedValue({
+      isInteractive: () => false,
+      getQuestion: () => '课程生成 prompt：三年级语文成语闯关课',
+      getSandbox: () => false,
+      getDebugMode: () => false,
+      getListExtensions: () => false,
+      getMcpServers: () => ({}),
+      initialize: vi.fn().mockResolvedValue(undefined),
+      getIdeMode: () => false,
+      getExperimentalZedIntegration: () => false,
+      getScreenReader: () => false,
+      getGeminiMdFileCount: () => 0,
+      getProjectRoot: () => '/',
+      getInputFormat: () => undefined,
+      getContentGeneratorConfig: () => ({ authType: 'test-auth' }),
+      getSessionId: () => 'test-session',
+      getUsageStatisticsEnabled: () => false,
+      getTelemetryLogPromptsEnabled: () => false,
+    } as unknown as Config);
+
+    process.env['SANDBOX'] = '1';
+    try {
+      await main();
+    } catch (error) {
+      if (!(error instanceof MockProcessExitError)) {
+        throw error;
+      }
+    } finally {
+      processExitSpy.mockRestore();
+      if (originalIsTTY) {
+        Object.defineProperty(process.stdin, 'isTTY', originalIsTTY);
+      } else {
+        delete (process.stdin as { isTTY?: unknown }).isTTY;
+      }
+    }
+
+    expect(coursePromptModule.collectCourseStudioGoal).toHaveBeenCalledTimes(1);
+    expect(coursePromptModule.buildCourseStudioPrompt).toHaveBeenCalledWith({
+      goal: '三年级语文成语闯关课',
+    });
+    expect(runNonInteractiveSpy).toHaveBeenCalledWith(
+      validatedConfig,
+      expect.any(Object),
+      '课程生成 prompt：三年级语文成语闯关课',
+      expect.any(String),
+    );
+    vi.mocked(parseArguments).mockResolvedValue({} as never);
+  });
+
   it('verifies that we dont load the config before relaunchAppInChildProcess', async () => {
     const processExitSpy = vi
       .spyOn(process, 'exit')
@@ -135,7 +398,8 @@ describe('gemini.tsx main function', () => {
         throw new MockProcessExitError(code);
       });
     const { relaunchAppInChildProcess } = await import('./utils/relaunch.js');
-    const { loadCliConfig } = await import('./config/config.js');
+    const { loadCliConfig, parseArguments } =
+      await import('./config/config.js');
     const { loadSettings } = await import('./config/settings.js');
     const { loadSandboxConfig } = await import('./config/sandboxConfig.js');
     vi.mocked(loadSandboxConfig).mockResolvedValue(undefined);
@@ -172,6 +436,7 @@ describe('gemini.tsx main function', () => {
       setValue: vi.fn(),
       forScope: () => ({ settings: {}, originalSettings: {}, path: '' }),
     } as never);
+    vi.mocked(parseArguments).mockResolvedValue({} as never);
     try {
       await main();
     } catch (e) {
