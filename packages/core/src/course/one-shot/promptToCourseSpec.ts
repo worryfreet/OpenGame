@@ -57,6 +57,7 @@ interface ParsedPrompt {
   preferredInteraction: string[];
   knownIpMentions: string[];
   matureElements: string[];
+  actionSafetyRewrites: ActionSafetyRewrite[];
   privacyHints: string[];
   depthConflict: boolean;
 }
@@ -65,7 +66,14 @@ interface SafetyResult {
   sanitizedText: string;
   knownIpMentions: string[];
   matureElements: string[];
+  actionSafetyRewrites: ActionSafetyRewrite[];
   privacyHints: string[];
+}
+
+interface ActionSafetyRewrite {
+  original: string;
+  replacement: string;
+  preservedActions: string[];
 }
 
 const DEFAULT_DURATION_MINUTES = 20;
@@ -102,6 +110,27 @@ const MATURE_ELEMENT_PATTERNS = [
   '成人',
   '酒吧',
   '恋爱养成',
+];
+const ACTION_SAFETY_REWRITES: Array<{
+  pattern: string;
+  replacement: string;
+  preservedActions: string[];
+}> = [
+  {
+    pattern: '枪战',
+    replacement: '水枪靶场闯关',
+    preservedActions: ['瞄准', '命中', '移动目标', '装填水量'],
+  },
+  {
+    pattern: '打枪',
+    replacement: '水枪打靶',
+    preservedActions: ['瞄准', '命中', '目标选择'],
+  },
+  {
+    pattern: '射击',
+    replacement: '安全水枪射击',
+    preservedActions: ['瞄准', '命中', '节奏点击'],
+  },
 ];
 const PRIVACY_PATTERNS = [
   /(?:姓名|名字|叫)\s*[:：]?\s*[\u4e00-\u9fa5A-Za-z]{2,12}/g,
@@ -253,6 +282,13 @@ function sanitizeOneShotText(text: string): SafetyResult {
   const matureElements = MATURE_ELEMENT_PATTERNS.filter((pattern) =>
     trimmed.includes(pattern),
   );
+  const actionSafetyRewrites = ACTION_SAFETY_REWRITES.filter((item) =>
+    trimmed.includes(item.pattern),
+  ).map((item) => ({
+    original: item.pattern,
+    replacement: item.replacement,
+    preservedActions: item.preservedActions,
+  }));
   const privacyHints = PRIVACY_PATTERNS.flatMap((pattern) =>
     Array.from(trimmed.matchAll(pattern), (match) => match[0]),
   );
@@ -270,6 +306,12 @@ function sanitizeOneShotText(text: string): SafetyResult {
       '适龄冒险',
     );
   }
+  for (const rewrite of actionSafetyRewrites) {
+    sanitizedText = sanitizedText.replace(
+      new RegExp(escapeRegExp(rewrite.original), 'g'),
+      rewrite.replacement,
+    );
+  }
   for (const pattern of PRIVACY_PATTERNS) {
     sanitizedText = sanitizedText.replace(pattern, '学生');
   }
@@ -278,6 +320,7 @@ function sanitizeOneShotText(text: string): SafetyResult {
     sanitizedText,
     knownIpMentions,
     matureElements,
+    actionSafetyRewrites,
     privacyHints,
   };
 }
@@ -294,6 +337,7 @@ function parsePrompt(input: string, safety: SafetyResult): ParsedPrompt {
     preferredInteraction: parsePreferredInteraction(input),
     knownIpMentions: safety.knownIpMentions,
     matureElements: safety.matureElements,
+    actionSafetyRewrites: safety.actionSafetyRewrites,
     privacyHints: safety.privacyHints,
     depthConflict: hasDepthConflict(input),
   };
@@ -342,6 +386,11 @@ function buildKnownFields(
   if (parsed.knownIpMentions.length > 0) {
     assumptions.push('已将知名 IP 表达改写为原创、安全的相近氛围。');
   }
+  if (parsed.actionSafetyRewrites.length > 0) {
+    assumptions.push(
+      '已将枪战等动作偏好改写为水枪/靶场等适龄非伤害表达，并保留瞄准、命中、移动目标等核心操作。',
+    );
+  }
   if (parsed.privacyHints.length > 0) {
     assumptions.push('已移除可能包含学生身份或联系方式的原文片段。');
   }
@@ -386,6 +435,10 @@ function buildStyleSpec(
     '恐怖',
     '抽卡',
     '不适龄恋爱',
+    '真实枪械',
+    '子弹',
+    '伤害表现',
+    '战斗受伤',
     ...parsed.knownIpMentions.map((mention) => `${mention} 仿作`),
     ...parsed.matureElements,
   ]);
@@ -629,6 +682,8 @@ function parseInterests(input: string): string[] {
     '魔法学院',
     '足球',
     '建造',
+    '水枪靶场',
+    '水枪打靶',
   ];
   return mergeUnique(interests.filter((interest) => input.includes(interest)));
 }
@@ -645,6 +700,9 @@ function parseTheme(input: string): string | undefined {
   if (likeMatch?.[1]) return `${likeMatch[1].trim()}氛围`;
   const themeMatch = input.match(/做成([^，。,.；;]+)/);
   if (themeMatch?.[1]) return themeMatch[1].replace(/风格$/, '').trim();
+  if (containsAny(input, ['水枪靶场', '水枪打靶', '安全水枪射击'])) {
+    return '水枪靶场闯关';
+  }
   const styleMatch = input.match(/([\u4e00-\u9fa5A-Za-z0-9]{1,12})\s*风格/);
   return styleMatch?.[1]?.trim();
 }
@@ -676,6 +734,10 @@ function parsePreferredInteraction(input: string): string[] {
   if (containsAny(input, ['塔防', '防守'])) interactions.push('策略防守');
   if (containsAny(input, ['匹配', '连线'])) interactions.push('匹配连线');
   if (containsAny(input, ['建造', '拼装'])) interactions.push('建造拼装');
+  if (containsAny(input, ['水枪', '靶场', '射击', '瞄准', '命中'])) {
+    interactions.push('安全瞄准命中');
+    interactions.push('移动目标点击');
+  }
   return interactions;
 }
 

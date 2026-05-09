@@ -154,12 +154,14 @@ COURSE GDD GENERATED.
 7. 每道 assessment item 必须有 answer、explanation、misconceptionTag、hint；explanation 必须写出关键推理步骤。
 8. narrationPlan.segments 必须输出逐字稿分段，供本地 TTS 批量生成。
 9. assetPlan.audio 只规划 bgm/sfx，讲解旁白不要混入普通 audio 资产。
-10. 视频只能可选；监护人关闭 allowGeneratedVideo 时不能规划 video。
-11. validationPlan.requiredChecks 必须覆盖 schema、学习目标、讲解、互动、评价。
-12. 输出必须面向 course_ui/course_grid/course_td 模板族，不允许要求修改 ui_heavy/grid_logic/tower_defense 原模板。
-13. 如果 selectedPlan 包含 workflow，courseGdd.workflow 必须逐字段保留该 workflow；如果没有，必须生成一个只使用 ready playlet 的 DAG。
-14. workflow 只能引用 ready playlet，不允许引用 planned playlet；玩法引擎由模板包提供，Course GDD 只能写 config、风格、素材和旁白。
-15. 必须输出 styleBible，统一主题、配色、角色方向、UI token、动效情绪、音频情绪和禁止元素。
+10. assetPlan.images 必须围绕 workflow 节点精准规划，至少覆盖主场景、角色/引导员、关键道具、正确反馈状态和错误反馈状态；不能只写泛泛“背景图”。
+11. 视频只能可选；监护人关闭 allowGeneratedVideo 时不能规划 video；允许视频时优先规划 1 个开场或章节过场视频，用于建立身份、任务或关键状态变化。
+12. validationPlan.requiredChecks 必须覆盖 schema、学习目标、讲解、互动、评价。
+13. 输出必须面向 course_ui/course_grid/course_td 模板族，不允许要求修改 ui_heavy/grid_logic/tower_defense 原模板。
+14. 如果 selectedPlan 包含 workflow，courseGdd.workflow 必须逐字段保留该 workflow；如果没有，必须生成一个只使用 ready playlet 的 DAG。
+15. workflow 只能引用 ready playlet，不允许引用 planned playlet；玩法引擎由模板包提供，Course GDD 只能写 config、风格、素材和旁白。
+16. 必须输出 styleBible，统一主题、配色、角色方向、UI token、动效情绪、音频情绪和禁止元素。
+17. 图片/视频 prompt 应服务课程动作和反馈后果：动作玩法要体现瞄准目标、命中反馈、移动靶或参数变化；禁止真实枪械、子弹、伤害、血腥和击杀。
 
 CourseGDD JSON 结构：
 {
@@ -511,9 +513,9 @@ function validateConfirmedPlan(params: GenerateCourseGDDParams): void {
   });
   if (!qualityReview.passed) {
     throw new Error(
-      `selectedPlan 未通过课程质量门禁，不能生成 Course GDD：总分 ${qualityReview.score.total}，阻断问题：${qualityReview.score.blockingIssues.join(
-        '；',
-      ) || '质量总分未达门槛'}`,
+      `selectedPlan 未通过课程质量门禁，不能生成 Course GDD：总分 ${qualityReview.score.total}，阻断问题：${
+        qualityReview.score.blockingIssues.join('；') || '质量总分未达门槛'
+      }`,
     );
   }
 }

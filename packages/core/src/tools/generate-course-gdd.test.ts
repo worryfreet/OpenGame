@@ -230,8 +230,18 @@ function buildSelectedPlan(): CoursePlanOption {
     courseArchetype: 'course_grid',
     gameplayType: '分类观察',
     workflow: {
-      startNodeId: 'classify',
+      startNodeId: 'evidence',
       nodes: [
+        {
+          id: 'evidence',
+          playletId: 'playlet-证据配对',
+          goalIds: ['goal_1', 'goal_2'],
+          config: {
+            prompt: '先搜集森林调查证据，把动物取食线索和角色卡配对。',
+            successCriteria: '证据配对正确后解锁生态网格。',
+          },
+          styleBindingId: 'forest',
+        },
         {
           id: 'classify',
           playletId: 'playlet-拖拽分箱',
@@ -254,6 +264,7 @@ function buildSelectedPlan(): CoursePlanOption {
         },
       ],
       edges: [
+        { from: 'evidence', to: 'classify', when: 'success' },
         { from: 'classify', to: 'chain', when: 'success' },
       ],
       recoveryPolicy: 'remediate_then_return',
@@ -265,7 +276,12 @@ function buildSelectedPlan(): CoursePlanOption {
       '状态变化反馈',
       '迁移复盘评价',
     ],
-    scenePlan: ['森林调查导入', '网格分类点亮生态状态', '迁移挑战与复盘'],
+    scenePlan: [
+      '森林调查员搜证导入',
+      '证据配对解锁生态网格',
+      '网格分类点亮生态状态',
+      '迁移挑战与复盘',
+    ],
     assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
     assetComplexity: 'medium',
     score: {
@@ -277,7 +293,8 @@ function buildSelectedPlan(): CoursePlanOption {
       cost: 80,
       safety: 94,
     },
-    recommendationReason: '网格分类会改变生态能量流状态，反馈会引导学生修复关系。',
+    recommendationReason:
+      '学生先以森林调查员身份搜证，再用证据完成网格分类；生态能量流状态会随操作点亮，反馈会引导学生修复关系。',
     risks: ['需要控制网格数量，避免认知负担。'],
   };
 }
@@ -371,7 +388,13 @@ function buildCourseGdd(params = buildParams()): CourseGDD {
       ],
     },
     assetPlan: {
-      images: [{ key: 'forest_grid_bg', description: '明亮森林网格背景' }],
+      images: [
+        { key: 'forest_scene_bg', description: '明亮森林调查主场景背景' },
+        { key: 'guide_character', description: '生态调查员角色立绘' },
+        { key: 'role_cards_prop', description: '森林角色卡片关键道具' },
+        { key: 'success_state', description: '正确反馈点亮生态状态图' },
+        { key: 'failure_state', description: '错误反馈提示状态图' },
+      ],
       audio: [
         { key: 'sfx_correct', description: '答对提示音', audioType: 'sfx' },
       ],

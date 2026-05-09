@@ -132,6 +132,19 @@ describe('createCourseGame', () => {
     });
   });
 
+  it('SDK CourseSpec 校验与 core 保持 1-12 年级一致', async () => {
+    const { buildCourseGamePrompt } =
+      await import('../../src/course/createCourseGame.js');
+    const spec = buildCourseSpec();
+    spec.studentProfile.grade = 9;
+    spec.topic = '一元二次函数';
+
+    const prompt = buildCourseGamePrompt({ courseSpec: spec });
+
+    expect(prompt).toContain('"grade": 9');
+    expect(prompt).toContain('"topic": "一元二次函数"');
+  });
+
   it('一句话入口拒绝空目标和确认生成模式', async () => {
     const { buildCourseGameFromPromptPrompt } =
       await import('../../src/course/createCourseGame.js');

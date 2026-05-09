@@ -61,6 +61,32 @@ describe('promptToCourseSpec', () => {
     expect(validateCourseSpec(result.courseSpec).valid).toBe(true);
   });
 
+  it('将枪战偏好改写为适龄水枪动作玩法并保留核心操作', () => {
+    const result = promptToCourseSpec({
+      text: '四年级数学, 一元二次方程, 枪战',
+    });
+
+    expect(result.requiredClarifications).toEqual([]);
+    expect(result.blockedReasons).toEqual([]);
+    expect(result.courseSpec).toBeDefined();
+    expect(result.courseSpec?.styleSpec.theme).toContain('水枪靶场');
+    expect(result.courseSpec?.studentProfile.interests).toContain('水枪靶场');
+    expect(result.courseSpec?.studentProfile.preferredInteraction).toContain(
+      '安全瞄准命中',
+    );
+    expect(result.courseSpec?.studentProfile.preferredInteraction).toContain(
+      '移动目标点击',
+    );
+    expect(result.courseSpec?.styleSpec.forbidden).toEqual(
+      expect.arrayContaining(['真实枪械', '子弹', '伤害表现']),
+    );
+    expect(JSON.stringify(result.courseSpec)).not.toContain('枪战');
+    expect(result.assumptions).toContain(
+      '已将枪战等动作偏好改写为水枪/靶场等适龄非伤害表达，并保留瞄准、命中、移动目标等核心操作。',
+    );
+    expect(validateCourseSpec(result.courseSpec).valid).toBe(true);
+  });
+
   it('知名 IP 会被清洗为原创氛围并记录假设', () => {
     const result = promptToCourseSpec({
       text: '三年级英语单词闯关，像哈利波特一样',

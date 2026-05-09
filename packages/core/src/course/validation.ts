@@ -485,11 +485,95 @@ function validateCourseGddAssets(
     }
   }
 
+  const imageCoverage = collectAssetImageCoverage(gdd);
+  const requiredCoverage = ['scene', 'character', 'prop', 'success', 'failure'];
+  for (const key of requiredCoverage) {
+    if (!imageCoverage.has(key)) {
+      errors.push({
+        path: '/assetPlan/images',
+        message:
+          'assetPlan.images 必须覆盖主场景、角色/引导员、关键道具、正确反馈状态和错误反馈状态。',
+      });
+      break;
+    }
+  }
+
+  if (
+    guardianLimits?.allowGeneratedVideo &&
+    (gdd.assetPlan.video?.length ?? 0) === 0
+  ) {
+    warnings.push({
+      path: '/assetPlan/video',
+      message:
+        '监护人允许生成视频时，建议规划 1 个可选开场或章节过场视频，并保留静态降级。',
+    });
+  }
+
   if (gdd.narrationPlan.segments.length < gdd.lessonUnits.length) {
     warnings.push({
       path: '/narrationPlan/segments',
       message: '旁白分段少于讲解单元，后续 TTS 可能无法覆盖全部讲解。',
     });
+  }
+}
+
+function collectAssetImageCoverage(gdd: CourseGDD): Set<string> {
+  const text = gdd.assetPlan.images
+    .map((asset) => `${asset.key} ${asset.description}`)
+    .join(' ');
+  const coverage = new Set<string>();
+  addCoverage(coverage, 'scene', text, [
+    '主场景',
+    '场景',
+    '背景',
+    'arena',
+    'scene',
+    'bg',
+  ]);
+  addCoverage(coverage, 'character', text, [
+    '角色',
+    '引导员',
+    '教练',
+    '伙伴',
+    'character',
+    'guide',
+  ]);
+  addCoverage(coverage, 'prop', text, [
+    '道具',
+    '关键道具',
+    '装备',
+    '水枪',
+    '靶',
+    '目标',
+    'prop',
+  ]);
+  addCoverage(coverage, 'success', text, [
+    '正确反馈',
+    '成功',
+    '命中',
+    '点亮',
+    '解锁',
+    'success',
+  ]);
+  addCoverage(coverage, 'failure', text, [
+    '错误反馈',
+    '失败',
+    '未命中',
+    '偏离',
+    '提示状态',
+    'failure',
+  ]);
+  return coverage;
+}
+
+function addCoverage(
+  coverage: Set<string>,
+  key: string,
+  text: string,
+  keywords: string[],
+): void {
+  if (keywords.some((keyword) => text.includes(keyword))) {
+    coverage.add(key);
   }
 }
 

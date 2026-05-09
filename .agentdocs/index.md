@@ -7,6 +7,8 @@
 
 ## 已完成任务文档
 
+`workflow/done/260509-course-studio-intent-creativity.md` - Course Studio 用户核心诉求保真、AI 创造力释放和反模板化质量门禁任务。
+`workflow/done/260509-course-studio-gameplay-quality.md` - Course Studio 生成结果游戏性、动作偏好保真、安全改写、素材/视频调用和链路可观测性修复任务。
 `workflow/done/260509-course-product-technical-optimization.md` - 游戏化课程产品与技术优化方案，多角色诊断并重点规划精彩度和 AI 开发权限。
 `workflow/done/260509-course-studio-agent-entry.md` - Course Studio 回归 OpenGame 原始 Agent 生成入口的重构任务。
 `workflow/done/260509-course-flow-html.md` - 游戏化课程从用户输入到课程输出的渐进式 HTML 流程图任务。
@@ -71,6 +73,10 @@
 - 与用户沟通、代理文档和代码注释统一使用中文；必要英文术语首次出现时补充中文说明。
 - Shell 命令不再强制使用 `rtk` 前缀。
 - 当前项目原始定位是从自然语言生成可玩的 Web 游戏；二创方向应保留 OpenGame 作为互动游戏生成底座，在其上新增课程规划、风格规划、未成年人保护和课程验证层。
+- 课程生成顶级价值观：速度优势来自核心底座模板和 ready playlet 复用，不从零生成；稳定优势来自 CourseSpec、CoursePlanOption、CourseGDD、mapper、素材/TTS/视频和验证门禁的工程化受控链路；全能优势来自课程目标、玩法分类和教学目标深度映射，再用模板 + AI + 精准图片/视频生成创建高质量课程。
+- 课程图片/视频生成必须服务玩法和教学反馈：图片覆盖角色、场景、关键道具、概念卡和反馈状态；视频只做开场/章节过场或关键状态变化，可选且可降级，不得因视频失败阻断主课程。
+- 安全、版权和适龄改写不得删除用户核心诉求。对任何偏好都应先提取身份、操作、情绪、节奏和挑战，再只替换危险或侵权表象：动作偏好保留瞄准/命中/移动/节奏，侦探偏好保留搜证/推理/排除，建造偏好保留拼装/升级/验收，经营偏好保留资源分配/收益风险/调度。
+- 课程模板是速度和稳定的底座，不是可见体验的上限；生成结果不得一眼看出是同一套模板换皮。AI 必须在 schema、mapper、runtime 和验证边界内创造独特角色、世界状态、关卡节奏、奖励、错因反馈、素材 prompt 和过场构想。
 - 课程玩法选型必须先看学习目标、学习阶段和学生核心动作，再参考学科；学科只提供素材语境，不能直接决定玩法。后续课程方案生成要优先使用 `prd/gameplay-taxonomy/` 的玩法超类，而不是只按学科映射到模板。
 - 课程模板族统一使用 `src/courseContent.json` 作为课程正文、互动、评价、旁白和报告指标入口；后续 Course GDD 映射不应为 `course_ui/course_grid/course_td` 各自发明不同配置协议。
 - Course GDD 到 OpenGame scaffold 统一走 `packages/core/src/course/courseGddMapper.ts`，由 mapper 输出课程模板复制指令、`src/courseContent.json`、真实 `src/main.ts` 和 `src/LevelManager.ts`，不允许在后续工具中重新散落拼装课程模板协议或伪造入口。

@@ -24,7 +24,39 @@ describe('buildCourseStudioPrompt', () => {
     expect(prompt).toContain(
       '自动选择质量最高且实现稳定的推荐方案继续生成完整课程',
     );
-    expect(prompt).toContain('不能只输出文字方案或静态页面');
+    expect(prompt).toContain('不能只输出文字方案、静态页面');
+    expect(prompt).toContain(
+      '不得绕过 Course GDD mapper 手写 React/Vite 静态题目页',
+    );
+    expect(prompt).toContain('调用 `generate_game_assets` 生成或登记关键图片');
+    expect(prompt).toContain('优先规划 1 个可选开场或章节过场视频');
+    expect(prompt).toContain('讲解旁白必须调用 `course_tts_manifest`');
+    expect(prompt).toContain('本次生成时间线');
+    expect(prompt).toContain('链路走向和参考资料');
+    expect(prompt).toContain('必须先提炼用户核心诉求');
+    expect(prompt).toContain('明显模板换皮');
+    expect(prompt).toContain('AI 必须在受控边界内发挥创造力');
+  });
+
+  it('要求所有偏好都做核心诉求保真而不是只处理枪战', () => {
+    const prompt = buildCourseStudioPrompt({
+      goal: '五年级语文阅读理解，侦探推理风格',
+    });
+
+    expect(prompt).toContain('用户偏好必须语义保真');
+    expect(prompt).toContain('喜欢侦探就保留搜证/推理/排除嫌疑');
+    expect(prompt).toContain('禁止生成一眼能看出是同一套模板替换题干的课程');
+  });
+
+  it('对动作类偏好要求适龄改写但保留核心动作', () => {
+    const prompt = buildCourseStudioPrompt({
+      goal: '四年级数学, 一元二次方程, 枪战',
+    });
+
+    expect(prompt).toContain('喜欢动作就保留瞄准/移动/节奏/命中');
+    expect(prompt).toContain('真实枪械改成水枪、泡沫飞镖或能量靶');
+    expect(prompt).toContain('不得退化成抽象泡泡或普通答题');
+    expect(prompt).toContain('至少包含 3 个 playlet 节点');
   });
 
   it('asks for the learning goal when no goal is provided', () => {

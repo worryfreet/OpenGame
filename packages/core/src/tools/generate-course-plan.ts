@@ -157,9 +157,12 @@ COURSE PLAN OPTIONS GENERATED.
 6. standard/deep/challenge 深度不能退化为纯选择题；learningLoop 必须包含讲解、示例、互动练习、反馈、评价。
 7. 每个方案必须包含 score.explanationDepthFit 和 recommendationReason。
 8. 风险必须具体说明，不能写空泛的“有风险”。如果风险很低，写明可控风险。
-9. 每个方案必须包含 workflow DAG。workflow.nodes 只能使用 ready playlet，第一批可选 id 包括：
+9. 用户兴趣不是装饰词。必须先从 studentProfile.interests、preferredInteraction、styleSpec.theme 中提炼核心体验诉求，例如侦探=搜证/推理/排除，建造=放置/拼装/升级/验收，经营=资源分配/收益风险/调度，动作=瞄准/移动/节奏/命中。
+10. 安全/版权/适龄改写只能替换危险或侵权表象，不能删除核心体验。真实枪械、伤害和击杀可改成水枪、泡沫飞镖、能量靶；知名 IP 可改成原创同类氛围；但必须保留用户期待的核心操作与情绪。
+11. 每个方案都必须体现 AI 创造力：角色身份、世界问题、核心任务、状态变化、奖励、错因反馈和素材方向要围绕本次用户诉求定制，不能输出泛用“导入-练习-复盘”的模板换皮。
+12. 每个方案必须包含 workflow DAG。workflow.nodes 只能使用 ready playlet，第一批可选 id 包括：
 playlet-找目标、playlet-找异常、playlet-单选判断、playlet-拖拽分箱、playlet-连线匹配、playlet-卡片配对、playlet-证据配对、playlet-框选标注、playlet-步骤排序、playlet-时间线排序、playlet-流程接线、playlet-条件组合推理、playlet-证据链拼接、playlet-证明步骤补全、playlet-口算挑战、playlet-等式平衡、playlet-图形拼装、playlet-坐标定位、playlet-迷宫寻路、playlet-模块装配、playlet-滑杆调参、playlet-开关组合、playlet-ab-对比、playlet-控制变量实验、playlet-点击射击、playlet-接落物、playlet-节奏点击、playlet-错题回炉、playlet-词块排序、playlet-对话选择、playlet-关键词提取、playlet-论证表达、playlet-模块定位、playlet-失败输出归因、playlet-回归测试、playlet-资源分配、playlet-多角色决策、playlet-分镜板、playlet-需求清单验收、playlet-调参-plus-对比。
-10. workflow 必须是 DAG，所有节点从 startNodeId 可达，每个 learningGoal 都要被至少一个 node.goalIds 覆盖。
+13. workflow 必须是 DAG，所有节点从 startNodeId 可达，每个 learningGoal 都要被至少一个 node.goalIds 覆盖。
 
 CoursePlanOption JSON 结构：
 {
@@ -228,7 +231,10 @@ ${JSON.stringify(candidatePlans, null, 2)}
 - stable：优先选择 implementationStability 和 safety 高的方案，素材复杂度通常为 low。
 - balanced：兼顾学习匹配、趣味和成本。
 - creative：可以更有趣，但不能牺牲讲解深度、适龄安全和可实现性。
-- 每个方案的 workflow 至少包含 2 个 playlet node；复杂主题应包含 3 个以上 node。
+- 每个方案的 workflow 至少包含 3 个 playlet node；复杂主题或强偏好主题应包含 4 个以上 node。
+- 每个方案至少覆盖 2 类学生核心动作，不能连续只做单选/问答。玩法组合必须解释为什么贴合用户核心诉求，而不是只贴合学科。
+- 如果用户给出偏好场景，config 要出现与该偏好一致的可操作参数和状态变化，例如侦探线索、建造材料、经营资源、动作命中窗口、探索路线、创作验收项。
+- scenePlan、recommendationReason 和 workflow.config 必须包含本次课程的独特角色、世界状态和奖励/解锁，禁止只写“导入、练习、复盘、报告”等通用词。
 - workflow.config 只能写课程内容、参数和反馈文案，不允许要求后续生成玩法引擎代码。
 - deep/challenge 深度下，方案必须体现迁移任务、错因反馈和复盘评价。
 - 如果候选少于 3 个，可以复用同一 courseArchetype，但玩法、场景和学习循环必须有明确差异。`;
@@ -443,9 +449,67 @@ function validatePlanQuality(
     ) {
       issues.push(`${option.id} 的 explanationDepthFit 低于 70`);
     }
+
+    const workflowNodes = option.workflow?.nodes ?? [];
+    if (workflowNodes.length < 3) {
+      issues.push(`${option.id} 的 workflow 至少需要 3 个 playlet node`);
+    }
+
+    if (
+      hasActionPreference(courseSpec) &&
+      !workflowNodes.some((node) =>
+        ['playlet-点击射击', 'playlet-接落物', 'playlet-节奏点击'].includes(
+          node.playletId,
+        ),
+      )
+    ) {
+      issues.push(`${option.id} 未保留学生动作偏好的瞄准/命中玩法节点`);
+    }
+
+    if (countGameplayFamilies(option) < 2) {
+      issues.push(`${option.id} 至少需要覆盖 2 类学生核心动作`);
+    }
   }
 
   return issues;
+}
+
+function hasActionPreference(courseSpec: CourseSpec): boolean {
+  const text = [
+    ...courseSpec.studentProfile.interests,
+    ...(courseSpec.studentProfile.preferredInteraction ?? []),
+    courseSpec.styleSpec.theme,
+  ].join(' ');
+  return ['水枪', '靶场', '射击', '瞄准', '命中', '移动目标'].some((keyword) =>
+    text.includes(keyword),
+  );
+}
+
+function countGameplayFamilies(option: CoursePlanOption): number {
+  const ids = option.workflow?.nodes.map((node) => node.playletId) ?? [];
+  const text = [
+    option.gameplayType,
+    ...option.scenePlan,
+    JSON.stringify(option.workflow ?? {}),
+  ].join(' ');
+  const families = new Set<string>();
+  const addIf = (family: string, keywords: string[]) => {
+    if (
+      ids.some((id) => keywords.some((keyword) => id.includes(keyword))) ||
+      keywords.some((keyword) => text.includes(keyword))
+    ) {
+      families.add(family);
+    }
+  };
+
+  addIf('action', ['点击射击', '接落物', '节奏点击', '瞄准', '命中', '水枪']);
+  addIf('quantity', ['等式平衡', '口算挑战', '坐标定位', '图形拼装', '方程']);
+  addIf('simulation', ['滑杆调参', '控制变量', 'A/B', '调参', '参数']);
+  addIf('sequence', ['步骤排序', '流程接线', '证据链', '证明步骤']);
+  addIf('organization', ['拖拽分箱', '连线匹配', '卡片配对', '找目标']);
+  addIf('diagnosis', ['模块定位', '失败输出归因', '回归测试', '排查']);
+
+  return families.size;
 }
 
 function recomputeScore(

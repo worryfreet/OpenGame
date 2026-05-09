@@ -197,6 +197,11 @@ function buildOptions(): CoursePlanOption[] {
       title: '森林讲解任务',
       courseArchetype: 'course_ui',
       gameplayType: '剧情选择',
+      workflow: buildWorkflow([
+        ['classify', 'playlet-拖拽分箱', ['goal_2']],
+        ['chain', 'playlet-步骤排序', ['goal_1']],
+        ['review', 'playlet-证据配对', ['goal_1', 'goal_2']],
+      ]),
       learningLoop: ['讲解', '示例', '互动练习', '反馈', '评价'],
       scenePlan: ['导入', '角色辨认', '复盘'],
       assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
@@ -210,6 +215,11 @@ function buildOptions(): CoursePlanOption[] {
       title: '生态网格调查',
       courseArchetype: 'course_grid',
       gameplayType: '分类观察',
+      workflow: buildWorkflow([
+        ['classify', 'playlet-拖拽分箱', ['goal_2']],
+        ['path', 'playlet-流程接线', ['goal_1']],
+        ['transfer', 'playlet-条件组合推理', ['goal_1', 'goal_2']],
+      ]),
       learningLoop: ['讲解', '示例', '互动练习', '反馈', '评价'],
       scenePlan: ['导入', '网格分类', '迁移挑战'],
       assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
@@ -223,6 +233,11 @@ function buildOptions(): CoursePlanOption[] {
       title: '食物链守护挑战',
       courseArchetype: 'course_grid',
       gameplayType: '流程推演',
+      workflow: buildWorkflow([
+        ['target', 'playlet-找目标', ['goal_2']],
+        ['chain', 'playlet-证据链拼接', ['goal_1']],
+        ['test', 'playlet-回归测试', ['goal_1', 'goal_2']],
+      ]),
       learningLoop: ['讲解', '示例', '互动练习', '反馈', '评价'],
       scenePlan: ['导入', '路径推演', '复盘报告'],
       assessmentPoints: ['解释食物链', '识别生态系统中的角色'],
@@ -232,4 +247,28 @@ function buildOptions(): CoursePlanOption[] {
       risks: ['创意玩法需要限制分支数量。'],
     },
   ];
+}
+
+function buildWorkflow(
+  nodes: Array<[string, string, string[]]>,
+): CoursePlanOption['workflow'] {
+  return {
+    startNodeId: nodes[0][0],
+    nodes: nodes.map(([id, playletId, goalIds]) => ({
+      id,
+      playletId,
+      goalIds,
+      config: {
+        prompt: `${id} 任务`,
+        successCriteria: '完成后推进课程状态。',
+      },
+      styleBindingId: 'forest',
+    })),
+    edges: nodes.slice(0, -1).map(([id], index) => ({
+      from: id,
+      to: nodes[index + 1][0],
+      when: 'success',
+    })),
+    recoveryPolicy: 'hint_then_retry',
+  };
 }

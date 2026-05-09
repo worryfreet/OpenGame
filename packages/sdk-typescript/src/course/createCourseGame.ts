@@ -7,7 +7,7 @@ import type {
   ToolUseBlock,
 } from '../types/protocol.js';
 
-export type StudentGrade = 1 | 2 | 3 | 4 | 5 | 6;
+export type StudentGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export type ExplanationDepthLevel = 'intro' | 'standard' | 'deep' | 'challenge';
 export type NextCourseMode =
   | 'next_lesson'
@@ -517,7 +517,9 @@ function validateCreateCourseGameFromPromptOptions(
     throw new Error('一句话课程目标不能为空。');
   }
   if (params.mode && params.mode !== 'plan_only') {
-    throw new Error('一句话入口只支持 plan_only；确认方案后再调用 createCourseGame。');
+    throw new Error(
+      '一句话入口只支持 plan_only；确认方案后再调用 createCourseGame。',
+    );
   }
 }
 
@@ -562,12 +564,12 @@ function validateCourseSpecShape(spec: CourseSpec): void {
   }
 
   if (
-    ![1, 2, 3, 4, 5, 6].includes(spec.studentProfile?.grade) ||
+    ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(
+      spec.studentProfile?.grade,
+    ) ||
     !Array.isArray(spec.studentProfile?.interests)
   ) {
-    throw new Error(
-      'courseSpec.studentProfile 必须包含小学 1-6 年级和兴趣列表。',
-    );
+    throw new Error('courseSpec.studentProfile 必须包含 1-12 年级和兴趣列表。');
   }
 
   if (

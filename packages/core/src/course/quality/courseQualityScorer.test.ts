@@ -87,6 +87,90 @@ describe('MVP 3.0 课程质量评分', () => {
       '学生可见文案直接暴露教学目标，应改成任务、谜题、角色行动或世界状态目标。',
     );
   });
+
+  it('动作偏好被退化成普通问答时被导演阻断', () => {
+    const quality = scoreCourseQuality({
+      courseSpec: buildStrongSpec({
+        subject: '数学',
+        topic: '一元二次方程',
+        learningGoals: ['理解方程的解和等式关系', '能用方程解决问题'],
+        studentProfile: {
+          grade: 4,
+          readingLevel: 'medium',
+          interests: ['水枪靶场'],
+          preferredInteraction: ['安全瞄准命中', '移动目标点击'],
+          guardianLimits: {
+            maxSessionMinutes: 30,
+            allowUploadedImages: false,
+            allowGeneratedVideo: false,
+            contentStrictness: 'strict',
+          },
+        },
+        styleSpec: {
+          theme: '水枪靶场闯关',
+          palette: ['#2563EB', '#F59E0B', '#10B981'],
+          visualMood: '明亮、有动作感',
+          characterStyle: '安全训练教练',
+          uiDensity: 'medium',
+          forbidden: ['真实枪械', '子弹', '伤害表现'],
+        },
+      }),
+      plan: buildNoStateChangePlan(),
+    });
+
+    expect(quality.passed).toBe(false);
+    expect(quality.gameDirection?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ dimension: 'actionPreferenceFit' }),
+        expect.objectContaining({ dimension: 'gameplayVariety' }),
+      ]),
+    );
+  });
+
+  it('非动作偏好的核心诉求被忽略时也会被导演阻断', () => {
+    const quality = scoreCourseQuality({
+      courseSpec: buildStrongSpec({
+        subject: '语文',
+        topic: '阅读理解',
+        learningGoals: ['识别关键线索', '根据证据推断人物动机'],
+        studentProfile: {
+          grade: 5,
+          readingLevel: 'medium',
+          interests: ['侦探', '推理'],
+          preferredInteraction: ['搜证推理'],
+          guardianLimits: {
+            maxSessionMinutes: 30,
+            allowUploadedImages: false,
+            allowGeneratedVideo: false,
+            contentStrictness: 'strict',
+          },
+        },
+        styleSpec: {
+          theme: '侦探调查',
+          palette: ['#1F2937', '#F59E0B', '#E5E7EB'],
+          visualMood: '紧张但适龄',
+          characterStyle: '少年侦探',
+          uiDensity: 'medium',
+          forbidden: ['恐怖', '血腥'],
+        },
+      }),
+      plan: {
+        ...buildNoStateChangePlan(),
+        title: '阅读理解讲解',
+        gameplayType: '讲解问答',
+        scenePlan: ['导入', '练习', '复盘'],
+        recommendationReason: '通过问答检查阅读理解。',
+      },
+    });
+
+    expect(quality.passed).toBe(false);
+    expect(quality.gameDirection?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ dimension: 'intentFit' }),
+        expect.objectContaining({ dimension: 'antiTemplateOriginality' }),
+      ]),
+    );
+  });
 });
 
 function buildStrongSpec(overrides: Partial<CourseSpec> = {}): CourseSpec {

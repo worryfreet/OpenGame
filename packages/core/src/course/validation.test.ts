@@ -178,6 +178,20 @@ describe('validateCourseGdd', () => {
       message: '监护人关闭生成视频时，Course GDD 不允许规划视频资产。',
     });
   });
+
+  it('拒绝缺少关键图片覆盖的 Course GDD', () => {
+    const gdd = buildCourseGdd();
+    gdd.assetPlan.images = [{ key: 'grid_bg', description: '明亮网格背景' }];
+
+    const result = validateCourseGdd(gdd);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContainEqual({
+      path: '/assetPlan/images',
+      message:
+        'assetPlan.images 必须覆盖主场景、角色/引导员、关键道具、正确反馈状态和错误反馈状态。',
+    });
+  });
 });
 
 function buildCourseSpec(overrides: Partial<CourseSpec> = {}): CourseSpec {
@@ -361,7 +375,13 @@ function buildCourseGdd(): CourseGDD {
       masteryCriteria: ['能解释面积含义', '能迁移区分面积和周长任务'],
     },
     assetPlan: {
-      images: [{ key: 'grid_bg', description: '明亮网格背景' }],
+      images: [
+        { key: 'grid_scene_bg', description: '太空基地主场景背景' },
+        { key: 'guide_character', description: '友好的小助手角色立绘' },
+        { key: 'area_prop_tiles', description: '面积网格关键道具' },
+        { key: 'success_state', description: '正确反馈点亮状态图' },
+        { key: 'failure_state', description: '错误反馈提示状态图' },
+      ],
       audio: [
         { key: 'sfx_correct', description: '正确提示音', audioType: 'sfx' },
       ],
